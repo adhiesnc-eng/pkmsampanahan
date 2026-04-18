@@ -729,10 +729,43 @@
             if(txt === db.config.qrData) {
                 const sh = getShiftData();
                 await h5q.stop(); closeModal();
+                
+                // NOTIF SEDANG PROSES
+                showToast("Sedang Memproses", "Mohon tunggu sebentar...");
                 showLoading(true);
-                const r = await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'saveScan', payload: { name: db.activeUser, date: new Date().toLocaleDateString('id-ID'), shift: sh.l, time: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) } }) });
-                const res = await r.json();
-                if(res.status==='success') { showToast("Berhasil", "Presensi tercatat."); fetchData(); }
+
+                try {
+                    const r = await fetch(WEB_APP_URL, { 
+                        method: "POST", 
+                        body: JSON.stringify({ 
+                            action: 'saveScan', 
+                            payload: { 
+                                name: db.activeUser, 
+                                date: new Date().toLocaleDateString('id-ID'), 
+                                shift: sh.l, 
+                                time: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) 
+                            } 
+                        }) 
+                    });
+                    const res = await r.json();
+                    if(res.status==='success') {
+                        // SUARA NOTIFIKASI BERHASIL
+                        if ('speechSynthesis' in window) {
+                            const msg = new SpeechSynthesisUtterance("Presensi Berhasil");
+                            msg.lang = 'id-ID';
+                            window.speechSynthesis.speak(msg);
+                        }
+                        
+                        showToast("Berhasil", "Presensi Anda tercatat."); 
+                        fetchData(); 
+                    } else {
+                        showToast("Gagal", "Server menolak permintaan.");
+                    }
+                } catch (e) {
+                    showToast("Error", "Gagal menghubungi server.");
+                } finally {
+                    showLoading(false);
+                }
             }
         }).catch(err => {
             alert("Kamera tidak ditemukan atau izin ditolak.");
