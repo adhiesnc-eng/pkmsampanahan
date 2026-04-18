@@ -447,11 +447,8 @@
         const todayParts = todayStr.split('/');
         const todayFormatted = `${parseInt(todayParts[0])}/${parseInt(todayParts[1])}/${todayParts[2]}`;
 
-        // LOGIKA TANGGAL LOGIS
         let logicalDate = new Date(now);
-        if (now.getHours() < 8) {
-            logicalDate.setDate(logicalDate.getDate() - 1);
-        }
+        if (now.getHours() < 8) { logicalDate.setDate(logicalDate.getDate() - 1); }
         const logicalDateStr = logicalDate.toLocaleDateString('id-ID');
         const ldParts = logicalDateStr.split('/');
         const logicalDateFormatted = `${parseInt(ldParts[0])}/${parseInt(ldParts[1])}/${ldParts[2]}`;
@@ -475,14 +472,32 @@
         const sel = document.getElementById('select-onboarding');
         sel.innerHTML = '<option value="">-- Pilih Nama --</option>' + db.officers.map(o => `<option value="${o}" ${db.activeUser===o?'selected':''}>${o}</option>`).join('');
 
+        // 📅 JADWAL HARI INI DENGAN WARNA
         let schH = '';
+        const shiftCodeMap = { 'Pagi': 'P', 'Siang': 'S', 'Malam': 'M' };
         ['Pagi','Siang','Malam'].forEach(s => {
-            const assigned = db.officers.filter(n => db.schedule[n] && db.schedule[n][logicalDate.getDate()] === s[0]);
+            const code = shiftCodeMap[s];
+            const assigned = db.officers.filter(n => db.schedule[n] && db.schedule[n][logicalDate.getDate()] === code);
             const isCurrentlyShift = (s === sh.l);
-            schH += `<div class="flex flex-col p-4 rounded-2xl transition-all ${isCurrentlyShift ? 'jaga-active shadow-md' : 'bg-slate-50'}"><div class="flex justify-between items-center mb-2"><p class="font-black text-[10px] uppercase ${isCurrentlyShift ? 'text-teal-700' : 'text-slate-500'}">${s} ${isCurrentlyShift ? '<span class="ml-2 text-[8px] bg-teal-600 text-white px-1.5 py-0.5 rounded-full animate-pulse">SEDANG JAGA</span>' : ''}</p><span class="text-[8px] font-bold ${isCurrentlyShift ? 'text-teal-600' : 'text-slate-400'} uppercase">${db.config.shiftHours[s].start} - ${db.config.shiftHours[s].end}</span></div><div class="flex flex-wrap">${assigned.length ? assigned.map(o => `<span class="staff-pill ${isCurrentlyShift ? 'staff-pill-active' : ''}">${o}</span>`).join('') : '<span class="text-slate-300 italic text-[9px]">Tidak ada petugas</span>'}</div></div>`;
+            
+            schH += `
+                <div class="flex flex-col p-4 rounded-2xl transition-all ${isCurrentlyShift ? 'jaga-active shadow-md' : 'bg-slate-50'}">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="font-black text-[10px] uppercase ${isCurrentlyShift ? 'text-teal-700' : 'text-slate-500'}">
+                            ${s} ${isCurrentlyShift ? '<span class="ml-2 text-[8px] bg-teal-600 text-white px-1.5 py-0.5 rounded-full animate-pulse">SEDANG JAGA</span>' : ''}
+                        </p>
+                        <span class="text-[8px] font-bold ${isCurrentlyShift ? 'text-teal-600' : 'text-slate-400'} uppercase">
+                            ${db.config.shiftHours[s].start} - ${db.config.shiftHours[s].end}
+                        </span>
+                    </div>
+                    <div class="flex flex-wrap">
+                        ${assigned.length ? assigned.map(o => `<span class="staff-pill cell-${code} ${isCurrentlyShift ? 'ring-2 ring-white' : ''}">${o}</span>`).join('') : '<span class="text-slate-300 italic text-[9px]">Tidak ada petugas</span>'}
+                    </div>
+                </div>`;
         });
         safeSetHTML('planned-schedule-list', schH);
 
+        // ✅ STATUS PETUGAS HARI INI DENGAN WARNA SHIFT
         const logicalDayLogs = db.logs.filter(l => {
             if(!l.date) return false;
             const p = l.date.split('/');
@@ -490,14 +505,38 @@
             return logDateStr === logicalDateFormatted;
         });
 
+        const statusShiftMap = {
+            'Pagi': { bg: 'bg-emerald-500', text: 'text-emerald-500', border: 'border-emerald-100', code: 'P' },
+            'Siang': { bg: 'bg-amber-500', text: 'text-amber-600', border: 'border-amber-100', code: 'S' },
+            'Malam': { bg: 'bg-blue-600', text: 'text-blue-600', border: 'border-blue-100', code: 'M' }
+        };
+
         safeSetHTML('current-duty-list', logicalDayLogs.length ? logicalDayLogs.map(l => {
             const isCurrentShift = l.shift === sh.l;
-            return `<div class="bg-white p-3 rounded-2xl flex items-center justify-between border ${isCurrentShift ? 'border-emerald-100 shadow-sm' : 'border-slate-100 opacity-70'}"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg ${isCurrentShift ? 'bg-emerald-500' : 'bg-slate-400'} text-white flex items-center justify-center font-black text-xs">${l.name[0]}</div><div><p class="text-[10px] font-black uppercase text-slate-700">${l.name}</p><p class="text-[7px] font-black ${isCurrentShift ? 'text-emerald-500' : 'text-slate-400'} uppercase flex items-center gap-1">${isCurrentShift ? '<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span> SEDANG JAGA' : 'SUDAH SELESAI'} • SHIFT ${l.shift.toUpperCase()}</p></div></div><div class="text-right"><p class="text-[9px] font-black text-slate-400 uppercase">${l.time}</p></div></div>`;
+            const sc = statusShiftMap[l.shift] || { bg: 'bg-slate-400', text: 'text-slate-500', border: 'border-slate-100', code: '' };
+            
+            return `
+            <div class="bg-white p-3 rounded-2xl flex items-center justify-between border ${isCurrentShift ? sc.border + ' shadow-sm' : 'border-slate-100 opacity-70'}">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg ${sc.bg} text-white flex items-center justify-center font-black text-xs shadow-sm">${l.name[0]}</div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase text-slate-700">${l.name}</p>
+                        <p class="text-[7px] font-black ${isCurrentShift ? sc.text : 'text-slate-400'} uppercase flex items-center gap-1">
+                            ${isCurrentShift ? `<span class="w-1.5 h-1.5 ${sc.bg} rounded-full animate-ping"></span> SEDANG JAGA` : 'SUDAH SELESAI'} 
+                            • SHIFT ${l.shift.toUpperCase()}
+                        </p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-[9px] font-black text-slate-400 uppercase">${l.time}</p>
+                </div>
+            </div>`;
         }).join('') : '<p class="text-center py-4 text-[10px] font-bold text-slate-300 uppercase">Belum ada absen masuk hari ini</p>');
 
         const sortedTodayLogs = [...logicalDayLogs].sort((a,b) => b.time.localeCompare(a.time));
         safeSetHTML('daily-log-list', sortedTodayLogs.length ? sortedTodayLogs.map(l => `<div class="bg-white/60 p-3 rounded-xl flex items-center justify-between border border-slate-100"><div class="flex items-center gap-3"><div class="w-6 h-6 rounded-md bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-[9px]">${l.name[0]}</div><div><p class="text-[9px] font-bold text-slate-700">${l.name}</p><p class="text-[7px] text-slate-400 font-medium">Shift ${l.shift} • Jam ${l.time}</p></div></div><div class="bg-slate-100 px-2 py-0.5 rounded text-[7px] font-black text-slate-400 uppercase">SCAN OK</div></div>`).join('') : '<p class="text-center py-2 text-[9px] font-bold text-slate-300">Belum ada aktivitas</p>');
 
+        // TABEL REKAP (Sudah otomatis menggunakan cell-P, cell-S, cell-M)
         let rh = `<table class="editor-table"><thead><tr><th class="sticky-col">PERAWAT</th>`;
         for(let d=1; d<=daysInMo; d++) rh += `<th>${d}</th>`;
         rh += `<th class="sticky-col-right">TOTAL</th></tr></thead><tbody>`;
@@ -715,66 +754,32 @@
             if(txt === db.config.qrData) {
                 const sh = getShiftData();
                 const now = new Date();
-                
                 let attendanceDate = now.toLocaleDateString('id-ID');
                 if(sh.l === 'Malam' && now.getHours() < 8) {
                     const yesterday = new Date(now);
                     yesterday.setDate(yesterday.getDate() - 1);
                     attendanceDate = yesterday.toLocaleDateString('id-ID');
                 }
-
-                const alreadyScanned = db.logs.some(l => {
-                    return l.name === db.activeUser && l.date === attendanceDate && l.shift === sh.l;
-                });
-
+                const alreadyScanned = db.logs.some(l => l.name === db.activeUser && l.date === attendanceDate && l.shift === sh.l);
                 if(alreadyScanned) {
                     await h5q.stop(); closeModal();
                     showToast("Gagal", `Anda sudah melakukan scan untuk Shift ${sh.l} hari ini.`);
-                    if ('speechSynthesis' in window) {
-                        window.speechSynthesis.speak(new SpeechSynthesisUtterance("Anda sudah absen untuk shift ini"));
-                    }
+                    if ('speechSynthesis' in window) { window.speechSynthesis.speak(new SpeechSynthesisUtterance("Anda sudah absen untuk shift ini")); }
                     return;
                 }
-
                 await h5q.stop(); closeModal();
                 showToast("Sedang Memproses", "Mohon tunggu sebentar...");
                 showLoading(true);
-
                 try {
-                    const r = await fetch(WEB_APP_URL, { 
-                        method: "POST", 
-                        body: JSON.stringify({ 
-                            action: 'saveScan', 
-                            payload: { 
-                                name: db.activeUser, 
-                                date: attendanceDate, 
-                                shift: sh.l, 
-                                time: now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) 
-                            } 
-                        }) 
-                    });
+                    const r = await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'saveScan', payload: { name: db.activeUser, date: attendanceDate, shift: sh.l, time: now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) } }) });
                     const res = await r.json();
                     if(res.status==='success') {
-                        if ('speechSynthesis' in window) {
-                            const msg = new SpeechSynthesisUtterance("Presensi Berhasil");
-                            msg.lang = 'id-ID';
-                            window.speechSynthesis.speak(msg);
-                        }
-                        showToast("Berhasil", "Presensi Anda tercatat."); 
-                        fetchData(); 
-                    } else {
-                        showToast("Gagal", "Server menolak permintaan.");
-                    }
-                } catch (e) {
-                    showToast("Error", "Gagal menghubungi server.");
-                } finally {
-                    showLoading(false);
-                }
+                        if ('speechSynthesis' in window) { window.speechSynthesis.speak(new SpeechSynthesisUtterance("Presensi Berhasil")); }
+                        showToast("Berhasil", "Presensi Anda tercatat."); fetchData(); 
+                    } else { showToast("Gagal", "Server menolak permintaan."); }
+                } catch (e) { showToast("Error", "Gagal menghubungi server."); } finally { showLoading(false); }
             }
-        }).catch(err => {
-            alert("Kamera tidak ditemukan atau izin ditolak.");
-            closeModal();
-        });
+        }).catch(err => { alert("Kamera tidak ditemukan atau izin ditolak."); closeModal(); });
     };
 
     window.closeModal = async () => { if(h5q) { try { await h5q.stop(); } catch(e) {} } document.getElementById('modal-scan').style.display = 'none'; };
@@ -789,14 +794,6 @@
         await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'saveChat', payload: { name: db.activeUser, message: msg, time: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) } }) });
         fetchData();
     };
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-            try {
-                navigator.serviceWorker.register('sw.js').catch(() => {});
-            } catch(e) {}
-        });
-    }
 
     window.onload = fetchData;
     setInterval(() => { fetchData('silent'); }, 15000);
