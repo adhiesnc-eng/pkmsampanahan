@@ -87,7 +87,7 @@
             display: flex; flex-direction: column;
             gap: 12px; box-shadow: 0 -15px 40px rgba(0,0,0,0.06);
             z-index: 100; border-radius: 35px 35px 0 0;
-            flex-shrink: 0; /* Menjamin tidak mengkerut */
+            flex-shrink: 0; 
         }
 
         .nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -358,7 +358,7 @@
 
     </div>
 
-    <!-- Navigasi Bawah Tetap Tampak di HP -->
+    <!-- Navigasi Bawah -->
     <nav class="dashboard-nav" id="main-nav">
         <div class="nav-grid">
             <button onclick="showView('home')" id="nav-home" class="nav-card-item active"><span class="text-xl">🏠</span><p class="text-[9px] font-bold uppercase">Beranda</p></button>
@@ -376,7 +376,6 @@
             <h3 class="font-black text-slate-800 text-sm uppercase">Scan QR Code</h3>
             <button onclick="closeModal()" class="w-10 h-10 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center">✕</button>
         </div>
-        <!-- Wadah Scanner Lebih Luas -->
         <div id="reader" style="width: 100%; min-height: 400px; background: #f1f5f9;"></div>
     </div>
 </div>
@@ -720,6 +719,7 @@
         document.getElementById('nav-'+v).classList.add('active');
         if(v === 'chat' && db.isChatAuth) { setTimeout(() => { document.getElementById('chat-container').scrollTop = 99999; }, 50); document.getElementById('chat-badge').classList.add('hidden'); }
     };
+
     window.openScanModal = async () => {
         if(!db.activeUser) return alert("Pilih identitas dulu!");
         document.getElementById('modal-scan').style.display = 'flex';
@@ -728,9 +728,32 @@
         h5q.start({ facingMode: "environment" }, config, async (txt) => {
             if(txt === db.config.qrData) {
                 const sh = getShiftData();
-                await h5q.stop(); closeModal();
+                const now = new Date();
+                const todayStr = now.toLocaleDateString('id-ID');
                 
-                // NOTIF SEDANG PROSES
+                // LOGIKA TANGGAL ABSENSI (Khusus Shift Malam Lewat Tengah Malam)
+                let attendanceDate = todayStr;
+                if(sh.l === 'Malam' && now.getHours() < 8) {
+                    const yesterday = new Date(now);
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    attendanceDate = yesterday.toLocaleDateString('id-ID');
+                }
+
+                // VALIDASI: CEK APAKAH SUDAH SCAN DI SHIFT INI
+                const alreadyScanned = db.logs.some(l => {
+                    return l.name === db.activeUser && l.date === attendanceDate && l.shift === sh.l;
+                });
+
+                if(alreadyScanned) {
+                    await h5q.stop(); closeModal();
+                    showToast("Gagal", `Anda sudah melakukan scan untuk Shift ${sh.l} hari ini.`);
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.speak(new SpeechSynthesisUtterance("Anda sudah absen untuk shift ini"));
+                    }
+                    return;
+                }
+
+                await h5q.stop(); closeModal();
                 showToast("Sedang Memproses", "Mohon tunggu sebentar...");
                 showLoading(true);
 
@@ -741,21 +764,19 @@
                             action: 'saveScan', 
                             payload: { 
                                 name: db.activeUser, 
-                                date: new Date().toLocaleDateString('id-ID'), 
+                                date: attendanceDate, 
                                 shift: sh.l, 
-                                time: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) 
+                                time: now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) 
                             } 
                         }) 
                     });
                     const res = await r.json();
                     if(res.status==='success') {
-                        // SUARA NOTIFIKASI BERHASIL
                         if ('speechSynthesis' in window) {
                             const msg = new SpeechSynthesisUtterance("Presensi Berhasil");
                             msg.lang = 'id-ID';
                             window.speechSynthesis.speak(msg);
                         }
-                        
                         showToast("Berhasil", "Presensi Anda tercatat."); 
                         fetchData(); 
                     } else {
@@ -772,6 +793,7 @@
             closeModal();
         });
     };
+
     window.closeModal = async () => { if(h5q) { try { await h5q.stop(); } catch(e) {} } document.getElementById('modal-scan').style.display = 'none'; };
     window.openPatientModal = () => { document.getElementById('modal-patient-report').style.display = 'flex'; };
     window.closePatientModal = () => { document.getElementById('modal-patient-report').style.display = 'none'; };
