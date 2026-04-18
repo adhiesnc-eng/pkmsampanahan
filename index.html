@@ -51,7 +51,7 @@
         }
         .scrollable-content::-webkit-scrollbar { display: none; }
 
-        .view-content { display: none; padding-bottom: 20px; }
+        .view-content { display: none; padding-bottom: 20px; height: 100%; }
         .view-content.active { display: block; animation: fadeIn 0.3s ease-in; }
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -68,7 +68,6 @@
             border-right: 2px solid #f1f5f9 !important; font-weight: 700; color: #1e293b;
         }
 
-        /* Kolom Total Sticky Kanan */
         .sticky-col-right {
             position: sticky; right: 0; background: white !important; z-index: 10;
             min-width: 50px; border-left: 2px solid #f1f5f9 !important;
@@ -81,7 +80,6 @@
         .cell-M { background-color: #eff6ff !important; color: #2563eb !important; }
         .cell-L { background-color: #fff1f2 !important; color: #e11d48 !important; }
 
-        /* Navigasi Perbaikan Mobile */
         .dashboard-nav {
             background: white; border-top: 1px solid #f1f5f9;
             padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
@@ -106,7 +104,6 @@
             cursor: pointer;
         }
 
-        /* Modal */
         .modal-overlay { 
             position: fixed; inset: 0; background: rgba(0,0,0,0.7); 
             backdrop-filter: blur(5px); z-index: 1000; 
@@ -121,7 +118,6 @@
         }
         @keyframes modalPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
-        /* Notifikasi Toast */
         #modern-toast {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
             z-index: 9999; width: 90%; max-width: 400px; background: white;
@@ -135,7 +131,6 @@
         .staff-pill-active { background: var(--primary); color: white; }
         .login-gradient { background: linear-gradient(135deg, var(--primary) 0%, #000 200%); }
 
-        /* Animasi Status */
         @keyframes pulse {
             0% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.05); opacity: 0.8; }
@@ -168,12 +163,10 @@
         }
         .archive-card:active { transform: scale(0.97); background: #f8fafc; }
 
-        /* Form Pasien Styles */
         .form-label { font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 4px; display: block; }
         .form-input { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; rounded-xl; font-size: 12px; font-weight: 600; outline: none; transition: 0.2s; border-radius: 12px; }
         .form-input:focus { border-color: var(--primary); background: white; }
 
-        /* Message UI Improvements */
         .chat-bubble { position: relative; cursor: pointer; transition: transform 0.1s; }
         .chat-bubble:active { transform: scale(0.98); }
         .pinned-msg-label { 
@@ -210,7 +203,6 @@
     <p class="font-extrabold text-slate-700 text-[10px] uppercase tracking-widest whitespace-nowrap">Sinkronisasi Data...</p>
 </div>
 
-<!-- TOAST -->
 <div id="modern-toast">
     <div id="toast-icon" class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center font-bold">✓</div>
     <div class="flex-1">
@@ -222,9 +214,7 @@
 <div class="app-container">
     <div class="scrollable-content" id="main-scroll">
         
-        <!-- HALAMAN BERANDA -->
         <div id="view-home" class="view-content active">
-            <!-- Header Beranda -->
             <div class="login-gradient p-6 pt-12 pb-14 rounded-b-[45px] text-white relative shadow-lg">
                 <div class="flex justify-between items-start">
                     <div>
@@ -246,7 +236,6 @@
             </div>
 
             <div class="px-5 -mt-6 space-y-6">
-                <!-- Login Section -->
                 <div id="section-login" class="bg-white rounded-[32px] p-8 shadow-xl border border-slate-50 text-center">
                     <div class="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-4" style="background-color: var(--primary-light); color: var(--primary)">🧑‍⚕️</div>
                     <h3 class="font-bold text-slate-800 text-sm mb-1 uppercase">Masuk Sesi</h3>
@@ -259,29 +248,26 @@
                     </div>
                 </div>
 
-                <!-- Info Jadwal -->
                 <div id="section-planned-schedule" class="hidden">
                     <div class="bg-white rounded-[32px] shadow-lg border-2 border-slate-50 p-5">
                         <h3 class="font-extrabold text-slate-800 text-[11px] uppercase tracking-widest mb-4 flex items-center justify-between">
-                            <span>📅 Jadwal Hari Ini</span>
-                            <span class="text-[8px] bg-slate-100 px-2 py-1 rounded text-slate-400 font-black">RENCANA</span>
+                            <span id="label-schedule-title">📅 Jadwal Hari Ini</span>
+                            <span class="text-[8px] bg-slate-100 px-2 py-1 rounded text-slate-400 font-black uppercase">Rencana</span>
                         </h3>
                         <div id="planned-schedule-list" class="space-y-3"></div>
                     </div>
                 </div>
 
-                <!-- Status Petugas -->
                 <div id="section-actual-duty" class="hidden">
                     <div class="bg-emerald-50/40 rounded-[32px] p-6 border border-emerald-100">
                         <h3 class="font-extrabold text-slate-700 text-[10px] uppercase tracking-widest mb-4 flex items-center justify-between">
                             <span>✅ Status Petugas Hari Ini</span>
-                            <span class="badge-live">AKTUAL</span>
+                            <span class="badge-live">Aktual</span>
                         </h3>
                         <div id="current-duty-list" class="space-y-3"></div>
                     </div>
                 </div>
 
-                <!-- Log Absen -->
                 <div id="section-daily-log" class="hidden">
                     <div class="bg-slate-50/50 rounded-[32px] p-6 border border-slate-200">
                         <h3 class="font-extrabold text-slate-500 text-[10px] uppercase tracking-widest mb-4 flex items-center justify-between">
@@ -294,7 +280,6 @@
             </div>
         </div>
 
-        <!-- HALAMAN REKAP -->
         <div id="view-rekap" class="view-content">
             <div class="bg-teal-900 p-6 pt-12 pb-10 text-white flex justify-between items-end shadow-lg" id="rekap-header" style="background-color: var(--primary)">
                 <div>
@@ -318,7 +303,6 @@
             </div>
         </div>
 
-        <!-- HALAMAN CHAT -->
         <div id="view-chat" class="view-content h-full">
             <div id="chat-auth-container" class="p-10 flex flex-col items-center justify-center text-center h-[70vh]">
                 <div class="w-24 h-24 bg-teal-100 rounded-[40px] flex items-center justify-center text-4xl mb-6 shadow-inner" style="background-color: var(--primary-light); color: var(--primary)">💬</div>
@@ -333,20 +317,12 @@
                     <h2 class="text-xs font-black uppercase tracking-widest text-slate-700">💬 Grup Koordinasi</h2>
                     <button onclick="logoutChat()" class="p-2 text-rose-500 bg-rose-50 rounded-xl">🚪</button>
                 </div>
-
-                <!-- Pesan Tersemat Container -->
                 <div id="pinned-messages-container" class="bg-white border-b px-4 py-2 hidden"></div>
-                
-                <!-- Container Chat -->
                 <div id="chat-container" class="flex-1 p-4 overflow-y-auto" onclick="db.activeActionMsgId = null; renderChat();"></div>
-                
-                <!-- Indikator Edit -->
                 <div id="editing-indicator" class="bg-amber-50 px-4 py-2 border-t text-[10px] font-bold text-amber-600 hidden flex justify-between">
                     <span>Sedang mengedit pesan...</span>
                     <button onclick="cancelEdit()" class="text-rose-500">BATAL</button>
                 </div>
-
-                <!-- Input Chat -->
                 <div class="p-4 bg-white border-t flex flex-col gap-3 pb-4">
                     <div class="flex items-center gap-3">
                         <button onclick="openPatientModal()" class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-xl text-slate-400 active:bg-slate-200">⊕</button>
@@ -359,7 +335,6 @@
 
     </div>
 
-    <!-- Navigasi Bawah -->
     <nav class="dashboard-nav" id="main-nav">
         <div class="nav-grid">
             <button onclick="showView('home')" id="nav-home" class="nav-card-item active"><span class="text-xl">🏠</span><p class="text-[9px] font-bold uppercase">Beranda</p></button>
@@ -472,11 +447,21 @@
         const todayParts = todayStr.split('/');
         const todayFormatted = `${parseInt(todayParts[0])}/${parseInt(todayParts[1])}/${todayParts[2]}`;
 
+        // LOGIKA TANGGAL LOGIS
+        let logicalDate = new Date(now);
+        if (now.getHours() < 8) {
+            logicalDate.setDate(logicalDate.getDate() - 1);
+        }
+        const logicalDateStr = logicalDate.toLocaleDateString('id-ID');
+        const ldParts = logicalDateStr.split('/');
+        const logicalDateFormatted = `${parseInt(ldParts[0])}/${parseInt(ldParts[1])}/${ldParts[2]}`;
+
         safeSetText('clock', now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }));
         safeSetText('date-label', now.toLocaleDateString('id-ID', { weekday:'long', day:'2-digit', month:'long' }));
         safeSetText('shift-label', "Shift " + sh.l); safeSetText('shift-icon', sh.emoji);
         safeSetText('rekap-current-month', monthNames[now.getMonth()] + " " + now.getFullYear());
-        
+        safeSetText('label-schedule-title', `📅 Jadwal (${logicalDate.getDate()} ${monthNames[logicalDate.getMonth()]})`);
+
         document.getElementById('dynamic-theme').innerHTML = `:root { --primary: ${db.config.themeColor}; --primary-light: ${db.config.themeColor}15; --accent: #f43f5e; --bg: #f8fafc; }`;
 
         safeSetText('user-display-name', db.activeUser || "Selamat Datang");
@@ -492,26 +477,26 @@
 
         let schH = '';
         ['Pagi','Siang','Malam'].forEach(s => {
-            const assigned = db.officers.filter(n => db.schedule[n] && db.schedule[n][now.getDate()] === s[0]);
+            const assigned = db.officers.filter(n => db.schedule[n] && db.schedule[n][logicalDate.getDate()] === s[0]);
             const isCurrentlyShift = (s === sh.l);
             schH += `<div class="flex flex-col p-4 rounded-2xl transition-all ${isCurrentlyShift ? 'jaga-active shadow-md' : 'bg-slate-50'}"><div class="flex justify-between items-center mb-2"><p class="font-black text-[10px] uppercase ${isCurrentlyShift ? 'text-teal-700' : 'text-slate-500'}">${s} ${isCurrentlyShift ? '<span class="ml-2 text-[8px] bg-teal-600 text-white px-1.5 py-0.5 rounded-full animate-pulse">SEDANG JAGA</span>' : ''}</p><span class="text-[8px] font-bold ${isCurrentlyShift ? 'text-teal-600' : 'text-slate-400'} uppercase">${db.config.shiftHours[s].start} - ${db.config.shiftHours[s].end}</span></div><div class="flex flex-wrap">${assigned.length ? assigned.map(o => `<span class="staff-pill ${isCurrentlyShift ? 'staff-pill-active' : ''}">${o}</span>`).join('') : '<span class="text-slate-300 italic text-[9px]">Tidak ada petugas</span>'}</div></div>`;
         });
         safeSetHTML('planned-schedule-list', schH);
 
-        const todayLogsList = db.logs.filter(l => {
+        const logicalDayLogs = db.logs.filter(l => {
             if(!l.date) return false;
             const p = l.date.split('/');
             const logDateStr = `${parseInt(p[0])}/${parseInt(p[1])}/${p[2]}`;
-            return logDateStr === todayFormatted;
+            return logDateStr === logicalDateFormatted;
         });
 
-        safeSetHTML('current-duty-list', todayLogsList.length ? todayLogsList.map(l => {
+        safeSetHTML('current-duty-list', logicalDayLogs.length ? logicalDayLogs.map(l => {
             const isCurrentShift = l.shift === sh.l;
             return `<div class="bg-white p-3 rounded-2xl flex items-center justify-between border ${isCurrentShift ? 'border-emerald-100 shadow-sm' : 'border-slate-100 opacity-70'}"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg ${isCurrentShift ? 'bg-emerald-500' : 'bg-slate-400'} text-white flex items-center justify-center font-black text-xs">${l.name[0]}</div><div><p class="text-[10px] font-black uppercase text-slate-700">${l.name}</p><p class="text-[7px] font-black ${isCurrentShift ? 'text-emerald-500' : 'text-slate-400'} uppercase flex items-center gap-1">${isCurrentShift ? '<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span> SEDANG JAGA' : 'SUDAH SELESAI'} • SHIFT ${l.shift.toUpperCase()}</p></div></div><div class="text-right"><p class="text-[9px] font-black text-slate-400 uppercase">${l.time}</p></div></div>`;
         }).join('') : '<p class="text-center py-4 text-[10px] font-bold text-slate-300 uppercase">Belum ada absen masuk hari ini</p>');
 
-        const sortedTodayLogs = [...todayLogsList].sort((a,b) => b.time.localeCompare(a.time));
-        safeSetHTML('daily-log-list', sortedTodayLogs.length ? sortedTodayLogs.map(l => `<div class="bg-white/60 p-3 rounded-xl flex items-center justify-between border border-slate-100"><div class="flex items-center gap-3"><div class="w-6 h-6 rounded-md bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-[9px]">${l.name[0]}</div><div><p class="text-[9px] font-bold text-slate-700">${l.name}</p><p class="text-[7px] text-slate-400 font-medium">Shift ${l.shift} • Jam ${l.time}</p></div></div><div class="bg-slate-100 px-2 py-0.5 rounded text-[7px] font-black text-slate-400 uppercase">SCAN OK</div></div>`).join('') : '<p class="text-center py-2 text-[9px] font-bold text-slate-300">Belum ada aktivitas hari ini</p>');
+        const sortedTodayLogs = [...logicalDayLogs].sort((a,b) => b.time.localeCompare(a.time));
+        safeSetHTML('daily-log-list', sortedTodayLogs.length ? sortedTodayLogs.map(l => `<div class="bg-white/60 p-3 rounded-xl flex items-center justify-between border border-slate-100"><div class="flex items-center gap-3"><div class="w-6 h-6 rounded-md bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-[9px]">${l.name[0]}</div><div><p class="text-[9px] font-bold text-slate-700">${l.name}</p><p class="text-[7px] text-slate-400 font-medium">Shift ${l.shift} • Jam ${l.time}</p></div></div><div class="bg-slate-100 px-2 py-0.5 rounded text-[7px] font-black text-slate-400 uppercase">SCAN OK</div></div>`).join('') : '<p class="text-center py-2 text-[9px] font-bold text-slate-300">Belum ada aktivitas</p>');
 
         let rh = `<table class="editor-table"><thead><tr><th class="sticky-col">PERAWAT</th>`;
         for(let d=1; d<=daysInMo; d++) rh += `<th>${d}</th>`;
@@ -730,17 +715,14 @@
             if(txt === db.config.qrData) {
                 const sh = getShiftData();
                 const now = new Date();
-                const todayStr = now.toLocaleDateString('id-ID');
                 
-                // LOGIKA TANGGAL ABSENSI (Khusus Shift Malam Lewat Tengah Malam)
-                let attendanceDate = todayStr;
+                let attendanceDate = now.toLocaleDateString('id-ID');
                 if(sh.l === 'Malam' && now.getHours() < 8) {
                     const yesterday = new Date(now);
                     yesterday.setDate(yesterday.getDate() - 1);
                     attendanceDate = yesterday.toLocaleDateString('id-ID');
                 }
 
-                // VALIDASI: CEK APAKAH SUDAH SCAN DI SHIFT INI
                 const alreadyScanned = db.logs.some(l => {
                     return l.name === db.activeUser && l.date === attendanceDate && l.shift === sh.l;
                 });
@@ -808,25 +790,11 @@
         fetchData();
     };
 
-    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-            const swCode = `
-                const CACHE_NAME = 'perawat-sampanahan-v1';
-                self.addEventListener('install', (e) => {
-                    self.skipWaiting();
-                });
-                self.addEventListener('fetch', (event) => {
-                    event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
-                });
-            `;
-            const blob = new Blob([swCode], { type: 'text/javascript' });
-            const swUrl = URL.createObjectURL(blob);
-            navigator.serviceWorker.register(swUrl).then(function(registration) {
-                console.log('ServiceWorker registration successful with scope: ', registration.scope);
-            }, function(err) {
-                console.log('ServiceWorker registration failed: ', err);
-            });
+            try {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            } catch(e) {}
         });
     }
 
