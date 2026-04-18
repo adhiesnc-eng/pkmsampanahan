@@ -40,17 +40,17 @@
 
         .app-container { 
             max-width: 500px; margin: 0 auto; background: white; 
-            height: 100vh; position: relative; display: flex; flex-direction: column;
+            height: 100dvh; position: relative; display: flex; flex-direction: column;
             box-shadow: 0 0 40px rgba(0,0,0,0.1);
         }
 
         .scrollable-content {
             flex: 1; overflow-y: auto; scrollbar-width: none;
-            padding-bottom: 220px; 
+            padding-bottom: 20px; 
         }
         .scrollable-content::-webkit-scrollbar { display: none; }
 
-        .view-content { display: none; padding-bottom: 20px; height: 100%; }
+        .view-content { display: none; padding-bottom: 20px; }
         .view-content.active { display: block; animation: fadeIn 0.3s ease-in; }
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -80,14 +80,14 @@
         .cell-M { background-color: #eff6ff !important; color: #2563eb !important; }
         .cell-L { background-color: #fff1f2 !important; color: #e11d48 !important; }
 
-        /* Navigasi */
+        /* Navigasi Perbaikan Mobile */
         .dashboard-nav {
-            position: absolute; bottom: 0; left: 0; width: 100%;
             background: white; border-top: 1px solid #f1f5f9;
-            padding: 16px; padding-bottom: env(safe-area-inset-bottom, 16px);
+            padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
             display: flex; flex-direction: column;
             gap: 12px; box-shadow: 0 -15px 40px rgba(0,0,0,0.06);
             z-index: 100; border-radius: 35px 35px 0 0;
+            flex-shrink: 0; /* Menjamin tidak mengkerut */
         }
 
         .nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -102,6 +102,7 @@
             border-radius: 20px; display: flex; align-items: center; justify-content: center;
             gap: 12px; font-weight: 800; font-size: 14px; text-transform: uppercase;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
         }
 
         /* Modal */
@@ -345,7 +346,7 @@
                 </div>
 
                 <!-- Input Chat -->
-                <div class="p-4 bg-white border-t flex flex-col gap-3 pb-40">
+                <div class="p-4 bg-white border-t flex flex-col gap-3 pb-4">
                     <div class="flex items-center gap-3">
                         <button onclick="openPatientModal()" class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-xl text-slate-400 active:bg-slate-200">⊕</button>
                         <input type="text" id="chat-input" placeholder="Tulis pesan..." class="flex-1 bg-slate-100 p-4 rounded-2xl text-xs font-semibold outline-none focus:bg-white focus:ring-2 focus:ring-teal-200">
@@ -357,7 +358,7 @@
 
     </div>
 
-    <!-- Navigasi Bawah -->
+    <!-- Navigasi Bawah Tetap Tampak di HP -->
     <nav class="dashboard-nav" id="main-nav">
         <div class="nav-grid">
             <button onclick="showView('home')" id="nav-home" class="nav-card-item active"><span class="text-xl">🏠</span><p class="text-[9px] font-bold uppercase">Beranda</p></button>
@@ -375,7 +376,8 @@
             <h3 class="font-black text-slate-800 text-sm uppercase">Scan QR Code</h3>
             <button onclick="closeModal()" class="w-10 h-10 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center">✕</button>
         </div>
-        <div id="reader" style="width: 100%; min-height: 350px; background: #f1f5f9;"></div>
+        <!-- Wadah Scanner Lebih Luas -->
+        <div id="reader" style="width: 100%; min-height: 400px; background: #f1f5f9;"></div>
     </div>
 </div>
 
@@ -511,16 +513,12 @@
         const sortedTodayLogs = [...todayLogsList].sort((a,b) => b.time.localeCompare(a.time));
         safeSetHTML('daily-log-list', sortedTodayLogs.length ? sortedTodayLogs.map(l => `<div class="bg-white/60 p-3 rounded-xl flex items-center justify-between border border-slate-100"><div class="flex items-center gap-3"><div class="w-6 h-6 rounded-md bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-[9px]">${l.name[0]}</div><div><p class="text-[9px] font-bold text-slate-700">${l.name}</p><p class="text-[7px] text-slate-400 font-medium">Shift ${l.shift} • Jam ${l.time}</p></div></div><div class="bg-slate-100 px-2 py-0.5 rounded text-[7px] font-black text-slate-400 uppercase">SCAN OK</div></div>`).join('') : '<p class="text-center py-2 text-[9px] font-bold text-slate-300">Belum ada aktivitas hari ini</p>');
 
-        // TABEL REKAP DENGAN KOLOM TOTAL STICKY KANAN
         let rh = `<table class="editor-table"><thead><tr><th class="sticky-col">PERAWAT</th>`;
         for(let d=1; d<=daysInMo; d++) rh += `<th>${d}</th>`;
         rh += `<th class="sticky-col-right">TOTAL</th></tr></thead><tbody>`;
-        
         db.officers.forEach(n => {
             const att = db.attendance[n.toUpperCase()] || {};
-            // Hitung total kehadiran (yang tidak kosong)
             const totalHadir = Object.values(att).filter(v => v !== '').length;
-            
             rh += `<tr><td class="sticky-col uppercase text-[10px] font-bold">${n}</td>`;
             for(let d=1; d<=daysInMo; d++) {
                 const v = att[d] || '';
@@ -584,12 +582,9 @@
                 archAtt[key][parseInt(p[0])] = l.shift ? l.shift[0] : '';
             }
         });
-        
-        // Header Excel juga ditambahkan kolom TOTAL
         const headers = ["NAMA PERAWAT"];
         for(let d=1; d<=dMo; d++) headers.push(d);
         headers.push("TOTAL");
-
         const rows = [headers];
         db.officers.forEach(n => {
             const att = archAtt[n.toUpperCase()] || {};
@@ -619,9 +614,7 @@
         const container = document.getElementById('chat-container');
         const pinnedContainer = document.getElementById('pinned-messages-container');
         if(!container) return;
-
         const activeChats = db.chat.filter(m => !db.deletedLocalIds.includes(m.msgId));
-
         const pinned = activeChats.filter(m => m.pinned);
         if(pinned.length > 0) {
             pinnedContainer.classList.remove('hidden');
@@ -629,14 +622,12 @@
         } else {
             pinnedContainer.classList.add('hidden');
         }
-
         container.innerHTML = activeChats.map(m => {
             const isMe = m.name === db.activeUser;
             const isSending = m.status === 'sending';
             const isPinned = m.pinned;
             const isEdited = m.edited;
             const isActive = db.activeActionMsgId === m.msgId;
-
             return `
             <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-4">
                 <div onclick="event.stopPropagation(); toggleMsgActions('${m.msgId}')" class="chat-bubble ${isMe ? 'bg-teal-600 text-white rounded-l-2xl rounded-tr-2xl' : 'bg-white text-slate-800 rounded-r-2xl rounded-tl-2xl'} p-3 shadow-sm border ${isMe ? 'border-teal-700' : 'border-slate-100'} max-w-[85%]">
@@ -649,10 +640,9 @@
                         ${isMe ? `<span class="text-[10px] ${isSending ? 'opacity-40' : 'text-white'} font-bold">${isSending ? '✓' : '✓✓'}</span>` : ''}
                     </div>
                 </div>
-                
                 ${isActive ? `
                 <div class="msg-action-bar">
-                    <button onclick="handlePinMessage('${m.msgId}')" class="msg-action-btn text-teal-600">${isPinned ? 'Lepas Pin' : 'Sematkan'}</button>
+                    <button onclick="handlePinMessage('${m.msgId}')" class="msg-action-btn text-teal-600">${isPinned ? 'Lepas' : 'Pin'}</button>
                     ${isMe ? `
                         <button onclick="startEditMessage('${m.msgId}', \`${m.message.replace(/'/g, "\\'")}\`)" class="msg-action-btn text-amber-600">Edit</button>
                         <button onclick="handleDeleteMessage('${m.msgId}')" class="msg-action-btn text-rose-500">Hapus</button>
@@ -660,15 +650,10 @@
                 </div>` : ''}
             </div>`;
         }).join('');
-        
         if(!db.activeActionMsgId) container.scrollTop = container.scrollHeight;
     }
 
-    window.toggleMsgActions = (id) => {
-        db.activeActionMsgId = (db.activeActionMsgId === id) ? null : id;
-        renderChat();
-    };
-
+    window.toggleMsgActions = (id) => { db.activeActionMsgId = (db.activeActionMsgId === id) ? null : id; renderChat(); };
     window.handlePinMessage = async (id) => {
         const msg = db.chat.find(m => m.msgId === id);
         if(!msg) return;
@@ -677,7 +662,6 @@
         renderChat();
         await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'pinChat', payload: { msgId: id, pinned: msg.pinned } }) });
     };
-
     window.startEditMessage = (id, text) => {
         currentEditId = id;
         const input = document.getElementById('chat-input');
@@ -687,44 +671,30 @@
         renderChat();
         input.focus();
     };
-
-    window.cancelEdit = () => {
-        currentEditId = null;
-        document.getElementById('chat-input').value = '';
-        document.getElementById('editing-indicator').classList.add('hidden');
-    };
-
+    window.cancelEdit = () => { currentEditId = null; document.getElementById('chat-input').value = ''; document.getElementById('editing-indicator').classList.add('hidden'); };
     window.handleDeleteMessage = async (id) => {
         if(!confirm("Hapus pesan ini?")) return;
         db.deletedLocalIds.push(id);
         db.activeActionMsgId = null;
         renderChat();
-        try {
-            await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'deleteChat', payload: { msgId: id } }) });
-        } catch(e) { console.error("Gagal hapus"); }
+        try { await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'deleteChat', payload: { msgId: id } }) }); } catch(e) { console.error("Gagal hapus"); }
     };
-
     window.sendMessage = async () => {
         const i = document.getElementById('chat-input');
         const msgText = i.value.trim();
         if(!msgText) return;
-        
         if(currentEditId) {
             const id = currentEditId;
             const target = db.chat.find(m => m.msgId === id);
             if(target) { target.message = msgText; target.edited = true; }
-            cancelEdit();
-            renderChat();
+            cancelEdit(); renderChat();
             await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'editChat', payload: { msgId: id, message: msgText } }) });
             return;
         }
-
         const tempId = "temp-" + Date.now();
         const timeNow = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
         db.chat.push({ msgId: tempId, name: db.activeUser, message: msgText, time: timeNow, status: 'sending' });
-        i.value = '';
-        renderChat();
-
+        i.value = ''; renderChat();
         try {
             const r = await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'saveChat', payload: { name: db.activeUser, message: msgText, time: timeNow } }) });
             const res = await r.json();
@@ -754,18 +724,22 @@
         if(!db.activeUser) return alert("Pilih identitas dulu!");
         document.getElementById('modal-scan').style.display = 'flex';
         h5q = new Html5Qrcode("reader");
-        h5q.start({ facingMode: "environment" }, { fps: 15, qrbox: 250 }, async (txt) => {
+        const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+        h5q.start({ facingMode: "environment" }, config, async (txt) => {
             if(txt === db.config.qrData) {
                 const sh = getShiftData();
-                h5q.stop(); closeModal();
+                await h5q.stop(); closeModal();
                 showLoading(true);
                 const r = await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'saveScan', payload: { name: db.activeUser, date: new Date().toLocaleDateString('id-ID'), shift: sh.l, time: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) } }) });
                 const res = await r.json();
                 if(res.status==='success') { showToast("Berhasil", "Presensi tercatat."); fetchData(); }
             }
+        }).catch(err => {
+            alert("Kamera tidak ditemukan atau izin ditolak.");
+            closeModal();
         });
     };
-    window.closeModal = () => { if(h5q) h5q.stop(); document.getElementById('modal-scan').style.display = 'none'; };
+    window.closeModal = async () => { if(h5q) { try { await h5q.stop(); } catch(e) {} } document.getElementById('modal-scan').style.display = 'none'; };
     window.openPatientModal = () => { document.getElementById('modal-patient-report').style.display = 'flex'; };
     window.closePatientModal = () => { document.getElementById('modal-patient-report').style.display = 'none'; };
     window.sendPatientReport = async () => {
