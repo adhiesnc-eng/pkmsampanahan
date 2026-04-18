@@ -46,16 +46,16 @@
 
         .scrollable-content {
             flex: 1; overflow-y: auto; scrollbar-width: none;
-            padding-bottom: 200px; 
+            padding-bottom: 220px; 
         }
         .scrollable-content::-webkit-scrollbar { display: none; }
 
-        .view-content { display: none; padding-bottom: 20px; }
+        .view-content { display: none; padding-bottom: 20px; height: 100%; }
         .view-content.active { display: block; animation: fadeIn 0.3s ease-in; }
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Rekap Table */
+        /* Tabel Rekap */
         .rekap-wrapper { width: 100%; overflow-x: auto; border-radius: 16px; background: white; border: 1px solid #f1f5f9; }
         .editor-table { border-collapse: collapse; min-width: 900px; font-size: 11px; }
         .editor-table th, .editor-table td { border: 1px solid #f1f5f9; text-align: center; padding: 12px 6px; }
@@ -67,12 +67,20 @@
             border-right: 2px solid #f1f5f9 !important; font-weight: 700; color: #1e293b;
         }
 
+        /* Kolom Total Sticky Kanan */
+        .sticky-col-right {
+            position: sticky; right: 0; background: white !important; z-index: 10;
+            min-width: 50px; border-left: 2px solid #f1f5f9 !important;
+            font-weight: 800;
+        }
+        thead th.sticky-col-right { background: #f1f5f9 !important; }
+
         .cell-P { background-color: var(--primary-light) !important; color: var(--primary) !important; }
         .cell-S { background-color: #fffbeb !important; color: #d97706 !important; }
         .cell-M { background-color: #eff6ff !important; color: #2563eb !important; }
         .cell-L { background-color: #fff1f2 !important; color: #e11d48 !important; }
 
-        /* Navigation */
+        /* Navigasi */
         .dashboard-nav {
             position: absolute; bottom: 0; left: 0; width: 100%;
             background: white; border-top: 1px solid #f1f5f9;
@@ -96,7 +104,7 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
-        /* Modals */
+        /* Modal */
         .modal-overlay { 
             position: fixed; inset: 0; background: rgba(0,0,0,0.7); 
             backdrop-filter: blur(5px); z-index: 1000; 
@@ -111,7 +119,7 @@
         }
         @keyframes modalPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
-        /* Toast */
+        /* Notifikasi Toast */
         #modern-toast {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
             z-index: 9999; width: 90%; max-width: 400px; background: white;
@@ -124,6 +132,73 @@
         .staff-pill { display: inline-flex; align-items: center; background: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 10px; font-size: 10px; font-weight: 700; margin-right: 4px; margin-bottom: 4px; text-transform: uppercase; }
         .staff-pill-active { background: var(--primary); color: white; }
         .login-gradient { background: linear-gradient(135deg, var(--primary) 0%, #000 200%); }
+
+        /* Animasi Status */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .jaga-active {
+            border: 2px solid var(--primary);
+            background: var(--primary-light);
+            animation: pulse 2s infinite ease-in-out;
+        }
+        .badge-live {
+            background: #ef4444;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 8px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .archive-card {
+            background: white;
+            border: 1px solid #f1f5f9;
+            padding: 14px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+        .archive-card:active { transform: scale(0.97); background: #f8fafc; }
+
+        /* Form Pasien Styles */
+        .form-label { font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .form-input { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; rounded-xl; font-size: 12px; font-weight: 600; outline: none; transition: 0.2s; border-radius: 12px; }
+        .form-input:focus { border-color: var(--primary); background: white; }
+
+        /* Message UI Improvements */
+        .chat-bubble { position: relative; cursor: pointer; transition: transform 0.1s; }
+        .chat-bubble:active { transform: scale(0.98); }
+        .pinned-msg-label { 
+            background: var(--primary-light); 
+            padding: 4px 12px; 
+            border-radius: 12px; 
+            font-size: 9px; 
+            font-weight: 800; 
+            color: var(--primary); 
+            display: flex; 
+            align-items: center; 
+            gap: 6px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .msg-action-bar {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+            padding: 0 4px;
+            animation: slideInDown 0.2s ease-out;
+        }
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .msg-action-btn { font-size: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 4px; }
     </style>
 </head>
 <body>
@@ -145,8 +220,9 @@
 <div class="app-container">
     <div class="scrollable-content" id="main-scroll">
         
-        <!-- HOME VIEW -->
+        <!-- HALAMAN BERANDA -->
         <div id="view-home" class="view-content active">
+            <!-- Header Beranda -->
             <div class="login-gradient p-6 pt-12 pb-14 rounded-b-[45px] text-white relative shadow-lg">
                 <div class="flex justify-between items-start">
                     <div>
@@ -181,43 +257,66 @@
                     </div>
                 </div>
 
-                <!-- Duty Info Section -->
+                <!-- Info Jadwal -->
                 <div id="section-planned-schedule" class="hidden">
                     <div class="bg-white rounded-[32px] shadow-lg border-2 border-slate-50 p-5">
-                        <h3 class="font-extrabold text-slate-800 text-[11px] uppercase tracking-widest mb-4">📅 Jadwal Hari Ini</h3>
+                        <h3 class="font-extrabold text-slate-800 text-[11px] uppercase tracking-widest mb-4 flex items-center justify-between">
+                            <span>📅 Jadwal Hari Ini</span>
+                            <span class="text-[8px] bg-slate-100 px-2 py-1 rounded text-slate-400 font-black">RENCANA</span>
+                        </h3>
                         <div id="planned-schedule-list" class="space-y-3"></div>
                     </div>
                 </div>
 
+                <!-- Status Petugas -->
                 <div id="section-actual-duty" class="hidden">
                     <div class="bg-emerald-50/40 rounded-[32px] p-6 border border-emerald-100">
-                        <h3 class="font-extrabold text-slate-700 text-[10px] uppercase tracking-widest mb-4">✅ Sedang Bertugas</h3>
+                        <h3 class="font-extrabold text-slate-700 text-[10px] uppercase tracking-widest mb-4 flex items-center justify-between">
+                            <span>✅ Status Petugas Hari Ini</span>
+                            <span class="badge-live">AKTUAL</span>
+                        </h3>
                         <div id="current-duty-list" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- Log Absen -->
+                <div id="section-daily-log" class="hidden">
+                    <div class="bg-slate-50/50 rounded-[32px] p-6 border border-slate-200">
+                        <h3 class="font-extrabold text-slate-500 text-[10px] uppercase tracking-widest mb-4 flex items-center justify-between">
+                            <span>🕒 Log Absen Hari Ini</span>
+                            <span class="text-[8px] bg-slate-200 px-2 py-1 rounded text-slate-500 font-black">HISTORI</span>
+                        </h3>
+                        <div id="daily-log-list" class="space-y-2"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- REKAP VIEW -->
+        <!-- HALAMAN REKAP -->
         <div id="view-rekap" class="view-content">
             <div class="bg-teal-900 p-6 pt-12 pb-10 text-white flex justify-between items-end shadow-lg" id="rekap-header" style="background-color: var(--primary)">
                 <div>
                     <h2 class="text-xl font-black uppercase italic tracking-tighter">Laporan</h2>
-                    <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest">Bulan Berjalan</p>
+                    <p class="text-[10px] font-bold opacity-60 uppercase tracking-widest" id="rekap-current-month">Bulan Berjalan</p>
                 </div>
                 <button onclick="exportToExcel()" class="bg-white/10 p-3 rounded-2xl border border-white/10 active:scale-90 transition-all">📥</button>
             </div>
             
-            <div class="p-4">
+            <div class="p-4 space-y-6">
                 <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
                     <div class="rekap-wrapper">
                         <div id="rekap-table-container"></div>
                     </div>
                 </div>
+
+                <div id="section-archive" class="space-y-3">
+                    <h3 class="font-extrabold text-slate-500 text-[10px] uppercase tracking-widest px-2">📂 Arsip Laporan Bulanan</h3>
+                    <div id="archive-list" class="grid grid-cols-1 gap-3 pb-10"></div>
+                </div>
             </div>
         </div>
 
-        <!-- CHAT VIEW -->
+        <!-- HALAMAN CHAT -->
         <div id="view-chat" class="view-content h-full">
             <div id="chat-auth-container" class="p-10 flex flex-col items-center justify-center text-center h-[70vh]">
                 <div class="w-24 h-24 bg-teal-100 rounded-[40px] flex items-center justify-center text-4xl mb-6 shadow-inner" style="background-color: var(--primary-light); color: var(--primary)">💬</div>
@@ -227,46 +326,49 @@
                 <button onclick="verifyChatPin()" class="w-full max-w-[200px] mt-6 bg-teal-600 text-white font-black py-4 rounded-[25px] text-[10px] uppercase shadow-lg" style="background-color: var(--primary)">Masuk Obrolan</button>
             </div>
             
-            <div id="chat-protected-content" class="hidden flex flex-col h-[80vh] bg-slate-50">
+            <div id="chat-protected-content" class="hidden flex flex-col h-full bg-slate-50">
                 <div class="bg-white p-4 pt-12 flex justify-between items-center border-b sticky top-0 z-30 shadow-sm">
                     <h2 class="text-xs font-black uppercase tracking-widest text-slate-700">💬 Grup Koordinasi</h2>
                     <button onclick="logoutChat()" class="p-2 text-rose-500 bg-rose-50 rounded-xl">🚪</button>
                 </div>
-                <div id="chat-container" class="flex-1 p-4 overflow-y-auto"></div>
-                <div class="p-4 bg-white border-t flex items-center gap-3">
-                    <input type="text" id="chat-input" placeholder="Tulis pesan..." class="flex-1 bg-slate-100 p-4 rounded-2xl text-xs font-semibold outline-none focus:bg-white focus:ring-2 focus:ring-teal-200">
-                    <button onclick="sendMessage()" class="bg-teal-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg" style="background-color: var(--primary)">➤</button>
+
+                <!-- Pesan Tersemat Container -->
+                <div id="pinned-messages-container" class="bg-white border-b px-4 py-2 hidden"></div>
+                
+                <!-- Container Chat -->
+                <div id="chat-container" class="flex-1 p-4 overflow-y-auto" onclick="db.activeActionMsgId = null; renderChat();"></div>
+                
+                <!-- Indikator Edit -->
+                <div id="editing-indicator" class="bg-amber-50 px-4 py-2 border-t text-[10px] font-bold text-amber-600 hidden flex justify-between">
+                    <span>Sedang mengedit pesan...</span>
+                    <button onclick="cancelEdit()" class="text-rose-500">BATAL</button>
+                </div>
+
+                <!-- Input Chat -->
+                <div class="p-4 bg-white border-t flex flex-col gap-3 pb-40">
+                    <div class="flex items-center gap-3">
+                        <button onclick="openPatientModal()" class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-xl text-slate-400 active:bg-slate-200">⊕</button>
+                        <input type="text" id="chat-input" placeholder="Tulis pesan..." class="flex-1 bg-slate-100 p-4 rounded-2xl text-xs font-semibold outline-none focus:bg-white focus:ring-2 focus:ring-teal-200">
+                        <button onclick="sendMessage()" id="btn-send-chat" class="bg-teal-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg active:scale-90 transition-all" style="background-color: var(--primary)">➤</button>
+                    </div>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- NAVIGATION -->
+    <!-- Navigasi Bawah -->
     <nav class="dashboard-nav" id="main-nav">
         <div class="nav-grid">
-            <button onclick="showView('home')" id="nav-home" class="nav-card-item active">
-                <span class="text-xl">🏠</span>
-                <p class="text-[9px] font-bold uppercase">Beranda</p>
-            </button>
-            <button onclick="showView('rekap')" id="nav-rekap" class="nav-card-item">
-                <span class="text-xl">📊</span>
-                <p class="text-[9px] font-bold uppercase">Rekap</p>
-            </button>
-            <button onclick="showView('chat')" id="nav-chat" class="nav-card-item relative">
-                <span class="text-xl">💬</span>
-                <p class="text-[9px] font-bold uppercase">Chat</p>
-                <div id="chat-badge" class="hidden absolute top-2 right-6 w-2.5 h-2.5 bg-rose-500 border-2 border-white rounded-full"></div>
-            </button>
+            <button onclick="showView('home')" id="nav-home" class="nav-card-item active"><span class="text-xl">🏠</span><p class="text-[9px] font-bold uppercase">Beranda</p></button>
+            <button onclick="showView('rekap')" id="nav-rekap" class="nav-card-item"><span class="text-xl">📊</span><p class="text-[9px] font-bold uppercase">Rekap</p></button>
+            <button onclick="showView('chat')" id="nav-chat" class="nav-card-item relative"><span class="text-xl">💬</span><p class="text-[9px] font-bold uppercase">Chat</p><div id="chat-badge" class="hidden absolute top-2 right-6 w-2.5 h-2.5 bg-rose-500 border-2 border-white rounded-full"></div></button>
         </div>
-        <button onclick="openScanModal()" class="btn-scan-main">
-            <span>🏥</span>
-            <span>Scan Presensi QR</span>
-        </button>
+        <button onclick="openScanModal()" class="btn-scan-main"><span>🏥</span><span>Scan Presensi QR</span></button>
     </nav>
 </div>
 
-<!-- SCAN MODAL -->
+<!-- MODAL SCAN -->
 <div id="modal-scan" class="modal-overlay" onclick="if(event.target === this) closeModal()">
     <div class="modal-card !p-0 overflow-hidden relative">
         <div class="p-6 flex justify-between items-center bg-white border-b">
@@ -277,30 +379,64 @@
     </div>
 </div>
 
+<!-- MODAL FORM PASIEN -->
+<div id="modal-patient-report" class="modal-overlay" onclick="if(event.target === this) closePatientModal()">
+    <div class="modal-card overflow-y-auto max-h-[90vh]">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="font-black text-slate-800 text-sm uppercase tracking-tight">📝 Laporan Pasien</h3>
+            <button onclick="closePatientModal()" class="text-slate-400">✕</button>
+        </div>
+        <div class="space-y-4">
+            <div><label class="form-label">Nama Pasien</label><input type="text" id="form-pat-name" class="form-input" placeholder="Contoh: Tn. Ahmad"></div>
+            <div><label class="form-label">Kondisi Saat Ini</label><input type="text" id="form-pat-cond" class="form-input" placeholder="Contoh: Demam turun, TD 120/80"></div>
+            <div><label class="form-label">Nama Obat</label><input type="text" id="form-pat-med" class="form-input" placeholder="Contoh: Paracetamol 500mg"></div>
+            <div><label class="form-label">Jam Minum Selanjutnya</label><input type="time" id="form-pat-time" class="form-input"></div>
+            <div><label class="form-label">Keterangan Tambahan</label><textarea id="form-pat-note" class="form-input h-20 resize-none" placeholder="Catatan khusus..."></textarea></div>
+            <button onclick="sendPatientReport()" class="w-full bg-teal-600 text-white font-black py-4 rounded-2xl text-[10px] uppercase shadow-lg mt-4" style="background-color: var(--primary)">Kirim Laporan</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw-Fl_qSNgqr9oEnn3vUmCtN4bRCZ5M7wz5YMiofUD33pN-kICuL6zubelKVcI_k2luXg/exec";
     
     let db = {
         activeUser: localStorage.getItem('presensi_user') || null,
         isChatAuth: localStorage.getItem('is_chat_auth') === 'true',
+        activeActionMsgId: null,
+        deletedLocalIds: [],
         officers: [], logs: [], schedule: {}, attendance: {}, chat: [],
-        config: { adminPin: "1111", chatPin: "ugd", qrData: "SISTEM-PRO-01", themeColor: '#0d9488', shiftHours: { Pagi: {}, Siang: {}, Malam: {} } }
+        config: { 
+            adminPin: "1111", chatPin: "ugd", qrData: "SISTEM-PRO-01", themeColor: '#0d9488', 
+            shiftHours: { Pagi: { start: "08:00", end: "14:00" }, Siang: { start: "14:00", end: "20:00" }, Malam: { start: "20:00", end: "08:00" } } 
+        }
     };
+    
     let h5q = null;
+    let currentEditId = null;
+    const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
     function safeSetText(id, txt) { const el = document.getElementById(id); if(el) el.innerText = txt; }
     function safeSetHTML(id, html) { const el = document.getElementById(id); if(el) el.innerHTML = html; }
     function showLoading(s) { document.getElementById('loading').classList.toggle('hidden', !s); }
 
-    function showToast(title, body, type = 'success') {
+    function getShiftData() {
+        const now = new Date(), cur = now.getHours() * 60 + now.getMinutes(), sh = db.config.shiftHours;
+        const parse = (t) => { if(!t) return 0; const p = String(t).split(':'); return parseInt(p[0])*60 + (p[1]?parseInt(p[1]):0); };
+        if(cur >= parse(sh.Pagi.start) && cur < parse(sh.Pagi.end)) return {l:'Pagi', emoji:'☀️', code:'P'};
+        if(cur >= parse(sh.Siang.start) && cur < parse(sh.Siang.end)) return {l:'Siang', emoji:'🌅', code:'S'};
+        return {l:'Malam', emoji:'🌙', code:'M'};
+    }
+
+    function showToast(title, body) {
         const toast = document.getElementById('modern-toast');
         safeSetText('toast-title', title); safeSetText('toast-body', body);
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 4000);
     }
 
-    async function fetchData() {
-        showLoading(true);
+    async function fetchData(mode) {
+        if(mode !== 'silent') showLoading(true);
         try {
             const r = await fetch(WEB_APP_URL + "?action=getData");
             const d = await r.json();
@@ -310,10 +446,10 @@
             db.chat = d.chat || [];
             db.config = d.config || db.config;
             
-            // Map attendance for Rekap table
             db.attendance = {};
             const now = new Date();
             db.logs.forEach(l => {
+                if(!l.date) return;
                 const p = l.date.split('/');
                 if(parseInt(p[1])-1 === now.getMonth() && parseInt(p[2]) === now.getFullYear()) {
                     const key = l.name.toUpperCase();
@@ -328,127 +464,322 @@
 
     function render() {
         const now = new Date();
+        const sh = getShiftData();
+        const todayStr = now.toLocaleDateString('id-ID');
+        const daysInMo = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+        const todayParts = todayStr.split('/');
+        const todayFormatted = `${parseInt(todayParts[0])}/${parseInt(todayParts[1])}/${todayParts[2]}`;
+
         safeSetText('clock', now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' }));
         safeSetText('date-label', now.toLocaleDateString('id-ID', { weekday:'long', day:'2-digit', month:'long' }));
+        safeSetText('shift-label', "Shift " + sh.l); safeSetText('shift-icon', sh.emoji);
+        safeSetText('rekap-current-month', monthNames[now.getMonth()] + " " + now.getFullYear());
         
-        // Update Theme
         document.getElementById('dynamic-theme').innerHTML = `:root { --primary: ${db.config.themeColor}; --primary-light: ${db.config.themeColor}15; --accent: #f43f5e; --bg: #f8fafc; }`;
 
-        // Home UI
         safeSetText('user-display-name', db.activeUser || "Selamat Datang");
         document.getElementById('section-login').classList.toggle('hidden', !!db.activeUser);
         document.getElementById('logout-btn').classList.toggle('hidden', !db.activeUser);
-        ['section-planned-schedule','section-actual-duty'].forEach(id => document.getElementById(id).classList.toggle('hidden', !db.activeUser));
+        ['section-planned-schedule','section-actual-duty','section-daily-log'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.classList.toggle('hidden', !db.activeUser);
+        });
 
         const sel = document.getElementById('select-onboarding');
         sel.innerHTML = '<option value="">-- Pilih Nama --</option>' + db.officers.map(o => `<option value="${o}" ${db.activeUser===o?'selected':''}>${o}</option>`).join('');
 
-        // Schedule List
-        const daysInMo = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
         let schH = '';
         ['Pagi','Siang','Malam'].forEach(s => {
             const assigned = db.officers.filter(n => db.schedule[n] && db.schedule[n][now.getDate()] === s[0]);
-            schH += `<div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl">
-                <p class="font-black text-xs uppercase text-slate-500">${s}</p>
-                <div>${assigned.map(o => `<span class="staff-pill">${o}</span>`).join('') || '-'}</div>
-            </div>`;
+            const isCurrentlyShift = (s === sh.l);
+            schH += `<div class="flex flex-col p-4 rounded-2xl transition-all ${isCurrentlyShift ? 'jaga-active shadow-md' : 'bg-slate-50'}"><div class="flex justify-between items-center mb-2"><p class="font-black text-[10px] uppercase ${isCurrentlyShift ? 'text-teal-700' : 'text-slate-500'}">${s} ${isCurrentlyShift ? '<span class="ml-2 text-[8px] bg-teal-600 text-white px-1.5 py-0.5 rounded-full animate-pulse">SEDANG JAGA</span>' : ''}</p><span class="text-[8px] font-bold ${isCurrentlyShift ? 'text-teal-600' : 'text-slate-400'} uppercase">${db.config.shiftHours[s].start} - ${db.config.shiftHours[s].end}</span></div><div class="flex flex-wrap">${assigned.length ? assigned.map(o => `<span class="staff-pill ${isCurrentlyShift ? 'staff-pill-active' : ''}">${o}</span>`).join('') : '<span class="text-slate-300 italic text-[9px]">Tidak ada petugas</span>'}</div></div>`;
         });
         safeSetHTML('planned-schedule-list', schH);
 
-        // Rekap Table
+        const todayLogsList = db.logs.filter(l => {
+            if(!l.date) return false;
+            const p = l.date.split('/');
+            const logDateStr = `${parseInt(p[0])}/${parseInt(p[1])}/${p[2]}`;
+            return logDateStr === todayFormatted;
+        });
+
+        safeSetHTML('current-duty-list', todayLogsList.length ? todayLogsList.map(l => {
+            const isCurrentShift = l.shift === sh.l;
+            return `<div class="bg-white p-3 rounded-2xl flex items-center justify-between border ${isCurrentShift ? 'border-emerald-100 shadow-sm' : 'border-slate-100 opacity-70'}"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg ${isCurrentShift ? 'bg-emerald-500' : 'bg-slate-400'} text-white flex items-center justify-center font-black text-xs">${l.name[0]}</div><div><p class="text-[10px] font-black uppercase text-slate-700">${l.name}</p><p class="text-[7px] font-black ${isCurrentShift ? 'text-emerald-500' : 'text-slate-400'} uppercase flex items-center gap-1">${isCurrentShift ? '<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span> SEDANG JAGA' : 'SUDAH SELESAI'} • SHIFT ${l.shift.toUpperCase()}</p></div></div><div class="text-right"><p class="text-[9px] font-black text-slate-400 uppercase">${l.time}</p></div></div>`;
+        }).join('') : '<p class="text-center py-4 text-[10px] font-bold text-slate-300 uppercase">Belum ada absen masuk hari ini</p>');
+
+        const sortedTodayLogs = [...todayLogsList].sort((a,b) => b.time.localeCompare(a.time));
+        safeSetHTML('daily-log-list', sortedTodayLogs.length ? sortedTodayLogs.map(l => `<div class="bg-white/60 p-3 rounded-xl flex items-center justify-between border border-slate-100"><div class="flex items-center gap-3"><div class="w-6 h-6 rounded-md bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-[9px]">${l.name[0]}</div><div><p class="text-[9px] font-bold text-slate-700">${l.name}</p><p class="text-[7px] text-slate-400 font-medium">Shift ${l.shift} • Jam ${l.time}</p></div></div><div class="bg-slate-100 px-2 py-0.5 rounded text-[7px] font-black text-slate-400 uppercase">SCAN OK</div></div>`).join('') : '<p class="text-center py-2 text-[9px] font-bold text-slate-300">Belum ada aktivitas hari ini</p>');
+
+        // TABEL REKAP DENGAN KOLOM TOTAL STICKY KANAN
         let rh = `<table class="editor-table"><thead><tr><th class="sticky-col">PERAWAT</th>`;
         for(let d=1; d<=daysInMo; d++) rh += `<th>${d}</th>`;
-        rh += `</tr></thead><tbody>`;
+        rh += `<th class="sticky-col-right">TOTAL</th></tr></thead><tbody>`;
+        
         db.officers.forEach(n => {
             const att = db.attendance[n.toUpperCase()] || {};
+            // Hitung total kehadiran (yang tidak kosong)
+            const totalHadir = Object.values(att).filter(v => v !== '').length;
+            
             rh += `<tr><td class="sticky-col uppercase text-[10px] font-bold">${n}</td>`;
             for(let d=1; d<=daysInMo; d++) {
                 const v = att[d] || '';
                 rh += `<td class="cell-${v} font-bold">${v}</td>`;
             }
-            rh += `</tr>`;
+            rh += `<td class="sticky-col-right text-slate-700 font-black">${totalHadir}</td></tr>`;
         });
         safeSetHTML('rekap-table-container', rh + `</tbody></table>`);
 
-        // Chat
+        renderArchives();
+
         if(db.isChatAuth) {
             document.getElementById('chat-auth-container').classList.add('hidden');
             document.getElementById('chat-protected-content').classList.remove('hidden');
             renderChat();
+        } else {
+            document.getElementById('chat-auth-container').classList.remove('hidden');
+            document.getElementById('chat-protected-content').classList.add('hidden');
         }
     }
 
-    function renderChat() {
-        const container = document.getElementById('chat-container');
-        container.innerHTML = db.chat.map(m => {
-            const isMe = m.name === db.activeUser;
-            return `<div class="flex ${isMe ? 'justify-end' : 'justify-start'} mb-4">
-                <div class="${isMe ? 'bg-teal-600 text-white rounded-l-2xl rounded-tr-2xl' : 'bg-white rounded-r-2xl rounded-tl-2xl'} p-3 shadow-sm border ${isMe ? 'border-teal-700' : 'border-slate-100'} max-w-[80%]">
-                    ${!isMe ? `<p class="text-[9px] font-black uppercase mb-1 text-teal-600">${m.name}</p>` : ''}
-                    <p class="text-[11px] font-medium leading-relaxed">${m.message}</p>
-                    <p class="text-[7px] opacity-60 font-bold mt-1 text-right uppercase">${m.time}</p>
-                </div>
-            </div>`;
+    function renderArchives() {
+        const list = document.getElementById('archive-list');
+        if (!list) return;
+        const now = new Date();
+        const curMoYr = `${now.getMonth() + 1}/${now.getFullYear()}`;
+        const archives = {};
+        db.logs.forEach(l => {
+            if(!l.date) return;
+            const p = l.date.split('/');
+            const moYr = `${parseInt(p[1])}/${p[2]}`;
+            if (moYr !== curMoYr) {
+                if (!archives[moYr]) archives[moYr] = 0;
+                archives[moYr]++;
+            }
+        });
+        const sortedKeys = Object.keys(archives).sort((a,b) => {
+            const pa = a.split('/'), pb = b.split('/');
+            return pb[1] - pa[1] || pb[0] - pa[0];
+        });
+        if (sortedKeys.length === 0) {
+            list.innerHTML = '<p class="text-center py-6 text-[10px] font-bold text-slate-300 uppercase italic">Belum ada arsip</p>';
+            return;
+        }
+        list.innerHTML = sortedKeys.map(key => {
+            const [mo, yr] = key.split('/');
+            return `<div class="archive-card shadow-sm" onclick="exportArchive('${key}')"><div class="flex items-center gap-4"><div class="w-10 h-10 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center text-lg">📂</div><div><p class="text-xs font-black text-slate-700 uppercase">${monthNames[mo-1]} ${yr}</p><p class="text-[9px] font-bold text-slate-400 uppercase">${archives[key]} Data</p></div></div><div class="bg-slate-50 p-2 rounded-lg">📥</div></div>`;
         }).join('');
-        container.scrollTop = container.scrollHeight;
     }
 
-    // Actions
+    window.exportArchive = function(moYr) {
+        const [mo, yr] = moYr.split('/');
+        const dMo = new Date(yr, mo, 0).getDate();
+        const archAtt = {};
+        db.logs.forEach(l => {
+            if(!l.date) return;
+            const p = l.date.split('/');
+            if(parseInt(p[1]) == mo && p[2] == yr) {
+                const key = l.name.toUpperCase();
+                if(!archAtt[key]) archAtt[key] = {};
+                archAtt[key][parseInt(p[0])] = l.shift ? l.shift[0] : '';
+            }
+        });
+        
+        // Header Excel juga ditambahkan kolom TOTAL
+        const headers = ["NAMA PERAWAT"];
+        for(let d=1; d<=dMo; d++) headers.push(d);
+        headers.push("TOTAL");
+
+        const rows = [headers];
+        db.officers.forEach(n => {
+            const att = archAtt[n.toUpperCase()] || {};
+            const row = [n];
+            let total = 0;
+            for(let d=1; d<=dMo; d++) {
+                const v = att[d] || "";
+                if(v) total++;
+                row.push(v);
+            }
+            row.push(total);
+            rows.push(row);
+        });
+        const ws = XLSX.utils.aoa_to_sheet(rows), wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Rekap");
+        XLSX.writeFile(wb, `Laporan_${monthNames[mo-1]}_${yr}.xlsx`);
+    };
+
+    window.exportToExcel = function() {
+        const now = new Date();
+        const mo = now.getMonth() + 1;
+        const yr = now.getFullYear();
+        window.exportArchive(`${mo}/${yr}`);
+    };
+
+    function renderChat() {
+        const container = document.getElementById('chat-container');
+        const pinnedContainer = document.getElementById('pinned-messages-container');
+        if(!container) return;
+
+        const activeChats = db.chat.filter(m => !db.deletedLocalIds.includes(m.msgId));
+
+        const pinned = activeChats.filter(m => m.pinned);
+        if(pinned.length > 0) {
+            pinnedContainer.classList.remove('hidden');
+            pinnedContainer.innerHTML = pinned.map(m => `<div class="pinned-msg-label"><span>📌</span><span class="truncate font-bold">${m.name}: ${m.message}</span></div>`).join('');
+        } else {
+            pinnedContainer.classList.add('hidden');
+        }
+
+        container.innerHTML = activeChats.map(m => {
+            const isMe = m.name === db.activeUser;
+            const isSending = m.status === 'sending';
+            const isPinned = m.pinned;
+            const isEdited = m.edited;
+            const isActive = db.activeActionMsgId === m.msgId;
+
+            return `
+            <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-4">
+                <div onclick="event.stopPropagation(); toggleMsgActions('${m.msgId}')" class="chat-bubble ${isMe ? 'bg-teal-600 text-white rounded-l-2xl rounded-tr-2xl' : 'bg-white text-slate-800 rounded-r-2xl rounded-tl-2xl'} p-3 shadow-sm border ${isMe ? 'border-teal-700' : 'border-slate-100'} max-w-[85%]">
+                    ${!isMe ? `<p class="text-[9px] font-black uppercase mb-1 text-teal-600">${m.name}</p>` : ''}
+                    <p class="text-[11px] font-medium leading-relaxed whitespace-pre-line">${m.message}</p>
+                    <div class="flex items-center justify-end gap-1 mt-1">
+                        ${isEdited ? '<span class="text-[7px] opacity-40 font-bold italic">diedit</span>' : ''}
+                        ${isPinned ? '<span class="text-[7px] opacity-60">📌</span>' : ''}
+                        <p class="text-[7px] opacity-60 font-bold uppercase">${m.time}</p>
+                        ${isMe ? `<span class="text-[10px] ${isSending ? 'opacity-40' : 'text-white'} font-bold">${isSending ? '✓' : '✓✓'}</span>` : ''}
+                    </div>
+                </div>
+                
+                ${isActive ? `
+                <div class="msg-action-bar">
+                    <button onclick="handlePinMessage('${m.msgId}')" class="msg-action-btn text-teal-600">${isPinned ? 'Lepas Pin' : 'Sematkan'}</button>
+                    ${isMe ? `
+                        <button onclick="startEditMessage('${m.msgId}', \`${m.message.replace(/'/g, "\\'")}\`)" class="msg-action-btn text-amber-600">Edit</button>
+                        <button onclick="handleDeleteMessage('${m.msgId}')" class="msg-action-btn text-rose-500">Hapus</button>
+                    ` : ''}
+                </div>` : ''}
+            </div>`;
+        }).join('');
+        
+        if(!db.activeActionMsgId) container.scrollTop = container.scrollHeight;
+    }
+
+    window.toggleMsgActions = (id) => {
+        db.activeActionMsgId = (db.activeActionMsgId === id) ? null : id;
+        renderChat();
+    };
+
+    window.handlePinMessage = async (id) => {
+        const msg = db.chat.find(m => m.msgId === id);
+        if(!msg) return;
+        msg.pinned = !msg.pinned;
+        db.activeActionMsgId = null;
+        renderChat();
+        await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'pinChat', payload: { msgId: id, pinned: msg.pinned } }) });
+    };
+
+    window.startEditMessage = (id, text) => {
+        currentEditId = id;
+        const input = document.getElementById('chat-input');
+        input.value = text;
+        document.getElementById('editing-indicator').classList.remove('hidden');
+        db.activeActionMsgId = null;
+        renderChat();
+        input.focus();
+    };
+
+    window.cancelEdit = () => {
+        currentEditId = null;
+        document.getElementById('chat-input').value = '';
+        document.getElementById('editing-indicator').classList.add('hidden');
+    };
+
+    window.handleDeleteMessage = async (id) => {
+        if(!confirm("Hapus pesan ini?")) return;
+        db.deletedLocalIds.push(id);
+        db.activeActionMsgId = null;
+        renderChat();
+        try {
+            await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'deleteChat', payload: { msgId: id } }) });
+        } catch(e) { console.error("Gagal hapus"); }
+    };
+
+    window.sendMessage = async () => {
+        const i = document.getElementById('chat-input');
+        const msgText = i.value.trim();
+        if(!msgText) return;
+        
+        if(currentEditId) {
+            const id = currentEditId;
+            const target = db.chat.find(m => m.msgId === id);
+            if(target) { target.message = msgText; target.edited = true; }
+            cancelEdit();
+            renderChat();
+            await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'editChat', payload: { msgId: id, message: msgText } }) });
+            return;
+        }
+
+        const tempId = "temp-" + Date.now();
+        const timeNow = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+        db.chat.push({ msgId: tempId, name: db.activeUser, message: msgText, time: timeNow, status: 'sending' });
+        i.value = '';
+        renderChat();
+
+        try {
+            const r = await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'saveChat', payload: { name: db.activeUser, message: msgText, time: timeNow } }) });
+            const res = await r.json();
+            if(res.status === 'success') {
+                const msg = db.chat.find(m => m.msgId === tempId);
+                if(msg) { msg.status = 'delivered'; msg.msgId = res.newId; }
+                renderChat();
+            }
+        } catch(e) { console.error("Error sending"); }
+    };
+
     window.lockAccount = () => { const v = document.getElementById('select-onboarding').value; if(v){ db.activeUser = v; localStorage.setItem('presensi_user', v); render(); } };
     window.logout = () => { if(confirm("Keluar sesi?")){ localStorage.removeItem('presensi_user'); db.activeUser=null; render(); } };
-    window.verifyChatPin = () => { if(document.getElementById('chat-pin-input').value === db.config.chatPin){ db.isChatAuth=true; localStorage.setItem('is_chat_auth','true'); render(); }else alert("PIN Salah!"); };
+    window.verifyChatPin = () => { 
+        const pinInput = document.getElementById('chat-pin-input').value;
+        if(pinInput === db.config.chatPin){ db.isChatAuth = true; localStorage.setItem('is_chat_auth','true'); render(); } else alert("PIN Salah!"); 
+    };
     window.logoutChat = () => { db.isChatAuth=false; localStorage.removeItem('is_chat_auth'); render(); };
-    
     window.showView = (v) => {
         document.querySelectorAll('.view-content').forEach(el => el.classList.remove('active'));
         document.getElementById('view-'+v).classList.add('active');
         document.querySelectorAll('.nav-card-item').forEach(el => el.classList.remove('active'));
         document.getElementById('nav-'+v).classList.add('active');
+        if(v === 'chat' && db.isChatAuth) { setTimeout(() => { document.getElementById('chat-container').scrollTop = 99999; }, 50); document.getElementById('chat-badge').classList.add('hidden'); }
     };
-
     window.openScanModal = async () => {
         if(!db.activeUser) return alert("Pilih identitas dulu!");
         document.getElementById('modal-scan').style.display = 'flex';
         h5q = new Html5Qrcode("reader");
         h5q.start({ facingMode: "environment" }, { fps: 15, qrbox: 250 }, async (txt) => {
             if(txt === db.config.qrData) {
+                const sh = getShiftData();
                 h5q.stop(); closeModal();
                 showLoading(true);
-                const r = await fetch(WEB_APP_URL, {
-                    method: "POST",
-                    body: JSON.stringify({ 
-                        action: 'saveScan', 
-                        payload: { 
-                            name: db.activeUser, 
-                            date: new Date().toLocaleDateString('id-ID'), 
-                            shift: "Hadir", // Logic shift can be added here
-                            time: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})
-                        } 
-                    })
-                });
+                const r = await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'saveScan', payload: { name: db.activeUser, date: new Date().toLocaleDateString('id-ID'), shift: sh.l, time: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) } }) });
                 const res = await r.json();
-                if(res.status==='success') {
-                    showToast("Berhasil", "Presensi Anda tercatat.");
-                    fetchData();
-                }
+                if(res.status==='success') { showToast("Berhasil", "Presensi tercatat."); fetchData(); }
             }
         });
     };
-
     window.closeModal = () => { if(h5q) h5q.stop(); document.getElementById('modal-scan').style.display = 'none'; };
-
-    window.sendMessage = async () => {
-        const i = document.getElementById('chat-input'); if(!i.value.trim()) return;
-        const msg = i.value.trim(); i.value = '';
-        await fetch(WEB_APP_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: 'saveChat', payload: { name: db.activeUser, message: msg, time: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) } })
-        });
+    window.openPatientModal = () => { document.getElementById('modal-patient-report').style.display = 'flex'; };
+    window.closePatientModal = () => { document.getElementById('modal-patient-report').style.display = 'none'; };
+    window.sendPatientReport = async () => {
+        const name = document.getElementById('form-pat-name').value.trim();
+        const cond = document.getElementById('form-pat-cond').value.trim();
+        const msg = `📢 LAPORAN PASIEN\n👤 Nama: ${name}\n🌡️ Kondisi: ${cond}\n💊 Obat: ${document.getElementById('form-pat-med').value || '-'}\n🕒 Jam Minum: ${document.getElementById('form-pat-time').value || '-'}\n📝 Ket: ${document.getElementById('form-pat-note').value || '-'}`;
+        if(!name || !cond) return alert("Nama & Kondisi wajib!");
+        showLoading(true); closePatientModal();
+        await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'saveChat', payload: { name: db.activeUser, message: msg, time: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) } }) });
         fetchData();
     };
 
     window.onload = fetchData;
-    setInterval(() => { safeSetText('clock', new Date().toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' })); }, 30000);
+    setInterval(() => { fetchData('silent'); }, 15000);
 </script>
 </body>
 </html>
