@@ -12,6 +12,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Perawat Sampanahan">
     
+    <!-- PWA Manifest -->
     <link rel="manifest" href='data:application/json,{"name":"Sistem Presensi Perawat","short_name":"Presensi Perawat","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#0d9488","orientation":"portrait","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3063/3063204.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -806,6 +807,28 @@
         await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify({ action: 'saveChat', payload: { name: db.activeUser, message: msg, time: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) } }) });
         fetchData();
     };
+
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            const swCode = `
+                const CACHE_NAME = 'perawat-sampanahan-v1';
+                self.addEventListener('install', (e) => {
+                    self.skipWaiting();
+                });
+                self.addEventListener('fetch', (event) => {
+                    event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
+                });
+            `;
+            const blob = new Blob([swCode], { type: 'text/javascript' });
+            const swUrl = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(swUrl).then(function(registration) {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, function(err) {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+    }
 
     window.onload = fetchData;
     setInterval(() => { fetchData('silent'); }, 15000);
