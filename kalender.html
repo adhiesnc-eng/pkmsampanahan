@@ -476,17 +476,28 @@
         
         btn.innerHTML = "⏳ Memproses..."; btn.disabled = true;
 
+        // Simpan posisi scroll asli
+        const originalScrollX = window.scrollX;
+        const originalScrollY = window.scrollY;
+        window.scrollTo(0, 0);
+
         const stickyCols = document.querySelectorAll('.sticky-col');
         const headers = document.querySelectorAll('th');
-        const summaryHeaders = document.querySelectorAll('.summary-header'); // Target kolom Total
+        const summaryHeaders = document.querySelectorAll('.summary-header');
         const tableWrapper = document.querySelector('.table-wrapper');
+        const table = document.getElementById('main-table');
         
-        const originalWrapperStyle = tableWrapper.style.maxHeight;
-        tableWrapper.style.maxHeight = 'none'; 
+        // Backup styles
+        const originalWrapperStyle = tableWrapper.getAttribute('style') || '';
+        const originalAreaStyle = area.getAttribute('style') || '';
         
-        // Sembunyikan kolom Total untuk foto
+        // FORSIR UKURAN PENUH UNTUK CAPTURE (PENTING UNTUK MOBILE)
+        tableWrapper.style.maxHeight = 'none';
+        tableWrapper.style.overflow = 'visible';
+        area.style.width = table.scrollWidth + 40 + 'px'; // Lebar tabel + padding
+        area.style.maxWidth = 'none';
+        
         summaryHeaders.forEach(el => el.style.display = 'none');
-        
         stickyCols.forEach(el => el.style.position = 'static');
         headers.forEach(el => el.style.position = 'static');
 
@@ -495,26 +506,36 @@
                 scale: 2, 
                 useCORS: true, 
                 backgroundColor: "#ffffff",
-                logging: false
+                logging: false,
+                width: area.scrollWidth,
+                height: area.scrollHeight,
+                windowWidth: area.scrollWidth,
+                windowHeight: area.scrollHeight,
+                x: 0,
+                y: 0
             });
+            
             const link = document.createElement('a');
-            link.download = `Jadwal_Puskesmas_Sampanahan_${month}_${year}.png`;
+            link.download = `Jadwal_Sampanahan_${month}_${year}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
-            showToast("Gambar berhasil disimpan tanpa kolom Total!");
+            showToast("Gambar berhasil disimpan!");
         } catch (e) {
+            console.error(e);
             alert("Gagal membuat gambar.");
         } finally {
             // Kembalikan ke normal
             document.getElementById('export-header').classList.add('hidden');
             document.getElementById('capture-footer').style.display = 'none';
-            tableWrapper.style.maxHeight = originalWrapperStyle;
             
-            // Tampilkan kembali kolom Total
+            tableWrapper.setAttribute('style', originalWrapperStyle);
+            area.setAttribute('style', originalAreaStyle);
+            
             summaryHeaders.forEach(el => el.style.display = '');
-            
             stickyCols.forEach(el => el.style.position = 'sticky');
             headers.forEach(el => el.style.position = 'sticky');
+            
+            window.scrollTo(originalScrollX, originalScrollY);
             btn.innerHTML = originalText; btn.disabled = false;
         }
     }
