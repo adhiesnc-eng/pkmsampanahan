@@ -34,6 +34,7 @@
             max-height: 65vh;
             border: 1px solid #f1f5f9;
             border-radius: 8px;
+            scroll-behavior: smooth;
         }
         table {
             border-collapse: separate;
@@ -44,7 +45,7 @@
             background: #f8fafc;
             position: sticky;
             top: 0;
-            z-index: 20;
+            z-index: 20; /* Lapisan dasar untuk semua header */
             font-size: 9px;
             font-weight: 800;
             text-transform: uppercase;
@@ -63,11 +64,13 @@
             text-align: center;
             min-width: 60px;
         }
+        
+        /* Kolom Nama Petugas (Sticky ke Kiri) */
         .sticky-col {
             position: sticky;
             left: 0;
             background: white !important;
-            z-index: 10;
+            z-index: 25; /* Lebih tinggi dari td biasa, tapi lebih rendah dari th.sticky-col */
             text-align: left;
             padding-left: 16px !important;
             padding-right: 8px !important;
@@ -75,6 +78,12 @@
             min-width: 170px;
             border-right: 2px solid #e2e8f0 !important;
             height: 48px;
+        }
+
+        /* Perpotongan Header & Kolom Nama (Paling Atas) */
+        th.sticky-col {
+            z-index: 40 !important; /* Harus lebih tinggi dari th tanggal (20) dan td nama (25) */
+            background: #f8fafc !important;
         }
         
         select.shift-input {
@@ -102,6 +111,13 @@
         .cell-sunday { color: var(--sunday) !important; }
         th.cell-sunday { background-color: #fef2f2; }
         td.cell-sunday:not([class*="cell-"]) { background-color: #fffafb; }
+
+        /* Highlight Hari Ini */
+        .cell-today { outline: 2px solid var(--accent); outline-offset: -2px; position: relative; }
+        th.cell-today::after { 
+            content: 'HARI INI'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            background: var(--accent); color: white; font-size: 6px; padding: 2px 4px; border-radius: 4px;
+        }
 
         .summary-header {
             background: #f1f5f9;
@@ -179,7 +195,6 @@
             border: 1px solid #e2e8f0;
         }
 
-        /* Custom scrollbar for modal list */
         .nurse-manager-list::-webkit-scrollbar { width: 4px; }
         .nurse-manager-list::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
     </style>
@@ -199,12 +214,9 @@
             <button onclick="closeAddNurseModal()" class="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-full text-slate-300 hover:text-slate-500 transition-colors">✕</button>
         </div>
 
-        <!-- Bagian Daftar Petugas -->
         <div id="nurse-manager-list" class="nurse-manager-list">
-            <!-- List item akan diisi via JS -->
         </div>
 
-        <!-- Bagian Input Petugas Baru -->
         <div class="border-t border-slate-100 pt-6 mt-2">
             <label class="text-[10px] font-black uppercase text-slate-400 block mb-2 ml-1">Tambah Petugas Baru</label>
             <div class="flex gap-2">
@@ -424,10 +436,8 @@
                 return;
             }
             
-            // Update daftar petugas
             db.officers[index] = formattedNewName;
             
-            // Pindahkan data jadwal jika ada
             if (db.schedule[oldName]) {
                 db.schedule[formattedNewName] = db.schedule[oldName];
                 delete db.schedule[oldName];
@@ -473,6 +483,9 @@
             current.setDate(current.getDate() - 1);
         }
 
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        
         let weekNum = 1;
         for(let i = 0; i < 6; i++) {
             let weekStart = new Date(current);
@@ -482,7 +495,14 @@
             if (weekStart.getMonth() === month || weekEnd.getMonth() === month) {
                 let label = `Minggu ${weekNum++} (${weekStart.getDate()} ${monthNames[weekStart.getMonth()]} - ${weekEnd.getDate()} ${monthNames[weekEnd.getMonth()]})`;
                 let val = `${weekStart.getFullYear()}-${weekStart.getMonth()}-${weekStart.getDate()}`;
-                weekSel.add(new Option(label, val));
+                
+                const opt = new Option(label, val);
+                
+                if (today >= weekStart && today <= weekEnd) {
+                    opt.selected = true;
+                }
+
+                weekSel.add(opt);
             }
             current.setDate(current.getDate() + 7);
         }
@@ -493,7 +513,7 @@
         document.getElementById('view-monthly').className = mode === 'monthly' ? 'btn-toggle active' : 'btn-toggle inactive';
         document.getElementById('view-weekly').className = mode === 'weekly' ? 'btn-toggle active' : 'btn-toggle inactive';
         document.getElementById('select-week').classList.toggle('hidden', mode === 'monthly');
-        renderTable();
+        renderTable(true); 
     }
 
     async function fetchData() {
@@ -503,14 +523,14 @@
             db.officers = data.officers || [];
             db.schedule = data.schedule || {};
             db.config = data.config || {};
-            renderTable();
+            renderTable(true); 
         } catch (error) {
             db.officers = ["CONTOH PERAWAT 1", "CONTOH PERAWAT 2"];
-            renderTable();
+            renderTable(true);
         }
     }
 
-    function renderTable() {
+    function renderTable(shouldScroll = false) {
         const month = parseInt(document.getElementById('select-month').value);
         const year = parseInt(document.getElementById('select-year').value);
         const search = document.getElementById('search-nurse').value.toLowerCase();
@@ -550,10 +570,17 @@
         const periodLabel = `${monthNames[month]} ${year}`;
         document.getElementById('export-period-label').innerText = `Puskesmas Sampanahan • ${periodLabel}`;
 
+        const today = new Date();
+        const tDay = today.getDate(), tMonth = today.getMonth(), tYear = today.getFullYear();
+
         let headHtml = `<tr><th class="sticky-col">Nama Perawat</th>`;
         daysToRender.forEach(d => {
-            const sundayClass = d.isSunday ? 'cell-sunday' : '';
-            headHtml += `<th class="${sundayClass}"><div class="mb-1">${d.dayName}</div><div class="text-[11px]">${d.day}</div></th>`;
+            const isSunday = d.isSunday;
+            const isToday = d.day === tDay && d.month === tMonth && d.year === tYear;
+            const classes = `${isSunday ? 'cell-sunday' : ''} ${isToday ? 'cell-today' : ''}`;
+            const idAttr = isToday ? 'id="col-today"' : '';
+            
+            headHtml += `<th ${idAttr} class="${classes}"><div class="mb-1">${d.dayName}</div><div class="text-[11px]">${d.day}</div></th>`;
         });
         headHtml += `<th class="summary-header">TOTAL</th></tr>`;
         document.getElementById('table-head').innerHTML = headHtml;
@@ -570,10 +597,13 @@
                 daysToRender.forEach(d => {
                     const shiftValue = (db.schedule[name] && db.schedule[name][d.day]) ? db.schedule[name][d.day] : "";
                     if(shiftValue) rowCount++;
-                    const sundayClass = d.isSunday ? 'cell-sunday' : '';
+                    const isSunday = d.isSunday;
+                    const isToday = d.day === tDay && d.month === tMonth && d.year === tYear;
+                    const classes = `${isSunday ? 'cell-sunday' : ''} ${isToday ? 'cell-today' : ''} ${shiftValue ? 'cell-'+shiftValue : ''}`;
+                    
                     bodyHtml += `
-                    <td class="${sundayClass} ${shiftValue ? 'cell-'+shiftValue : ''}">
-                        <select onchange="updateShift('${name}', ${d.day}, this, ${d.isSunday})" class="shift-input ${sundayClass} ${shiftValue ? 'cell-'+shiftValue : ''}">
+                    <td class="${classes}">
+                        <select onchange="updateShift('${name}', ${d.day}, this, ${isSunday}, ${isToday})" class="shift-input ${classes}">
                             <option value=""></option><option value="P" ${shiftValue === 'P' ? 'selected' : ''}>P</option><option value="S" ${shiftValue === 'S' ? 'selected' : ''}>S</option><option value="M" ${shiftValue === 'M' ? 'selected' : ''}>M</option><option value="POLI" ${shiftValue === 'POLI' ? 'selected' : ''}>POLI</option>
                         </select>
                     </td>`;
@@ -582,15 +612,28 @@
             });
         }
         document.getElementById('table-body').innerHTML = bodyHtml;
+        
+        if (shouldScroll) {
+            setTimeout(scrollToToday, 300);
+        }
     }
 
-    function updateShift(name, day, el, isSunday) {
+    function scrollToToday() {
+        const col = document.getElementById('col-today');
+        const wrapper = document.querySelector('.table-wrapper');
+        if (col && wrapper) {
+            const offsetLeft = col.offsetLeft - wrapper.clientWidth / 2 + col.clientWidth / 2;
+            wrapper.scrollLeft = Math.max(0, offsetLeft);
+        }
+    }
+
+    function updateShift(name, day, el, isSunday, isToday) {
         if (!db.schedule[name]) db.schedule[name] = {};
         db.schedule[name][day] = el.value;
         const td = el.parentElement;
-        const sundayClass = isSunday ? 'cell-sunday' : '';
-        td.className = `${sundayClass} ${el.value ? 'cell-'+el.value : ''}`;
-        el.className = `shift-input ${sundayClass} ${el.value ? 'cell-'+el.value : ''}`;
+        const classes = `${isSunday ? 'cell-sunday' : ''} ${isToday ? 'cell-today' : ''} ${el.value ? 'cell-'+el.value : ''}`;
+        td.className = classes;
+        el.className = `shift-input ${classes}`;
     }
 
     async function saveToCloud() {
