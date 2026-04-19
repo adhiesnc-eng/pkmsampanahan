@@ -129,7 +129,6 @@
         .btn-toggle.active { background: var(--primary); color: white; }
         .btn-toggle.inactive { background: #f1f5f9; color: #64748b; }
 
-        /* Modal Background Blur */
         .modal-overlay {
             position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(8px); z-index: 1000;
@@ -137,13 +136,27 @@
             animation: fadeIn 0.3s ease;
         }
         .modal-card {
-            background: white; width: 90%; max-width: 400px;
-            border-radius: 32px; padding: 32px;
+            background: white; width: 95%; max-width: 450px;
+            border-radius: 32px; padding: 24px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh; display: flex; flex-direction: column;
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        .nurse-manager-list {
+            overflow-y: auto;
+            max-height: 300px;
+            margin: 16px 0;
+            padding-right: 4px;
+        }
+        .nurse-item {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #f8fafc; padding: 12px 16px; border-radius: 16px;
+            margin-bottom: 8px; border: 1px solid #f1f5f9;
+        }
+        .nurse-item:hover { border-color: var(--accent); }
 
         .export-footer {
             display: none;
@@ -165,30 +178,38 @@
             border-radius: 4px;
             border: 1px solid #e2e8f0;
         }
+
+        /* Custom scrollbar for modal list */
+        .nurse-manager-list::-webkit-scrollbar { width: 4px; }
+        .nurse-manager-list::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
 <div id="toast-container"></div>
 
-<!-- MODAL TAMBAH PETUGAS -->
+<!-- MODAL MANAJEMEN PETUGAS -->
 <div id="modal-add-nurse" class="modal-overlay" onclick="if(event.target === this) closeAddNurseModal()">
     <div class="modal-card">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="font-black text-slate-900 text-lg uppercase tracking-tight">Petugas Baru</h3>
-            <button onclick="closeAddNurseModal()" class="text-slate-300 hover:text-slate-500">✕</button>
-        </div>
-        <div class="space-y-4">
+        <div class="flex justify-between items-center mb-4">
             <div>
-                <label class="text-[10px] font-black uppercase text-slate-400 block mb-1.5 ml-1">Nama Lengkap</label>
-                <input type="text" id="new-nurse-input" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-teal-500 transition-all font-bold text-sm uppercase" placeholder="Contoh: Ahmad Subardjo">
+                <h3 class="font-black text-slate-900 text-lg uppercase tracking-tight">Manajemen Petugas</h3>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Daftar Tenaga Medis Aktif</p>
             </div>
-            <p class="text-[9px] text-slate-400 font-bold leading-relaxed italic">
-                * Nama akan otomatis dikonversi menjadi huruf kapital. Pastikan nama belum ada dalam daftar.
-            </p>
-            <div class="pt-4 flex gap-3">
-                <button onclick="closeAddNurseModal()" class="flex-1 py-4 rounded-2xl font-black text-[10px] uppercase text-slate-400 bg-slate-50 hover:bg-slate-100 transition-all">Batal</button>
-                <button onclick="submitNewNurse()" class="flex-1 py-4 rounded-2xl font-black text-[10px] uppercase bg-teal-600 text-white shadow-lg shadow-teal-100 hover:bg-teal-700 transition-all">Simpan</button>
+            <button onclick="closeAddNurseModal()" class="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-full text-slate-300 hover:text-slate-500 transition-colors">✕</button>
+        </div>
+
+        <!-- Bagian Daftar Petugas -->
+        <div id="nurse-manager-list" class="nurse-manager-list">
+            <!-- List item akan diisi via JS -->
+        </div>
+
+        <!-- Bagian Input Petugas Baru -->
+        <div class="border-t border-slate-100 pt-6 mt-2">
+            <label class="text-[10px] font-black uppercase text-slate-400 block mb-2 ml-1">Tambah Petugas Baru</label>
+            <div class="flex gap-2">
+                <input type="text" id="new-nurse-input" class="flex-1 bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl outline-none focus:border-teal-500 transition-all font-bold text-sm uppercase" placeholder="Nama Petugas...">
+                <button onclick="submitNewNurse()" class="px-6 rounded-2xl font-black text-[10px] uppercase bg-teal-600 text-white shadow-lg shadow-teal-100 hover:bg-teal-700 transition-all">Tambah</button>
             </div>
         </div>
     </div>
@@ -209,7 +230,7 @@
 
         <div class="flex flex-wrap justify-center gap-3">
             <button onclick="openAddNurseModal()" class="px-5 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 flex items-center gap-2">
-                <span>➕</span> Tambah Petugas
+                <span>👥</span> Manajemen Petugas
             </button>
             <button onclick="fetchData()" class="px-5 py-4 bg-white border border-slate-200 rounded-2xl text-[10px] font-black uppercase hover:bg-slate-50 transition-all shadow-sm">
                 🔄 Refresh
@@ -255,7 +276,6 @@
 
     <!-- Table Grid -->
     <div id="capture-area" class="excel-container">
-        <!-- Export Only Header -->
         <div id="export-header" class="hidden mb-6 text-center">
             <h2 class="text-xl font-black uppercase tracking-tighter">Jadwal Dinas Tenaga Medis</h2>
             <p id="export-period-label" class="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Puskesmas Sampanahan • Januari 2024</p>
@@ -277,7 +297,6 @@
             </table>
         </div>
 
-        <!-- Export Legend (Hidden in UI, Visible in Capture) -->
         <div id="export-legend" class="hidden mt-6 flex justify-center flex-wrap gap-6 pb-6 border-b border-slate-100">
             <div class="export-legend-item">
                 <div class="legend-box" style="background-color: #f0fdfa; border-color: #ccfbf1;"></div>
@@ -301,7 +320,6 @@
             </div>
         </div>
 
-        <!-- Export Footer -->
         <div id="capture-footer" class="export-footer">
             <div class="text-[9px] font-black text-slate-400 uppercase tracking-widest">
                 Dibuat secara otomatis oleh Sistem Manajemen Puskesmas Sampanahan
@@ -343,6 +361,7 @@
 
     // MODAL FUNCTIONS
     function openAddNurseModal() {
+        renderNurseManagerList();
         document.getElementById('modal-add-nurse').style.display = 'flex';
         document.getElementById('new-nurse-input').focus();
     }
@@ -350,6 +369,23 @@
     function closeAddNurseModal() {
         document.getElementById('modal-add-nurse').style.display = 'none';
         document.getElementById('new-nurse-input').value = "";
+    }
+
+    function renderNurseManagerList() {
+        const list = document.getElementById('nurse-manager-list');
+        if (db.officers.length === 0) {
+            list.innerHTML = `<p class="text-[10px] text-center text-slate-300 py-8 font-bold italic">Belum ada petugas terdaftar</p>`;
+            return;
+        }
+        list.innerHTML = db.officers.map((name, index) => `
+            <div class="nurse-item">
+                <span class="text-xs font-black uppercase text-slate-700">${name}</span>
+                <div class="flex gap-2">
+                    <button onclick="editNurseName(${index})" class="w-8 h-8 bg-indigo-50 text-indigo-500 rounded-lg flex items-center justify-center hover:bg-indigo-500 hover:text-white transition-all text-[10px]">✏️</button>
+                    <button onclick="deleteNurse(${index})" class="w-8 h-8 bg-rose-50 text-rose-500 rounded-lg flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all text-[10px]">🗑️</button>
+                </div>
+            </div>
+        `).join('');
     }
 
     function submitNewNurse() {
@@ -360,9 +396,47 @@
         if (db.officers.includes(name)) return showToast("Petugas sudah ada!");
 
         db.officers.push(name);
+        input.value = "";
+        renderNurseManagerList();
         renderTable();
-        closeAddNurseModal();
-        showToast(`Petugas ${name} Berhasil Ditambahkan Lokal!`);
+        showToast(`Petugas ${name} Ditambahkan!`);
+    }
+
+    function deleteNurse(index) {
+        const name = db.officers[index];
+        if (confirm(`Hapus petugas "${name}" secara permanen? Data jadwalnya juga akan ikut hilang.`)) {
+            db.officers.splice(index, 1);
+            if (db.schedule[name]) delete db.schedule[name];
+            renderNurseManagerList();
+            renderTable();
+            showToast(`Petugas ${name} Berhasil Dihapus!`);
+        }
+    }
+
+    function editNurseName(index) {
+        const oldName = db.officers[index];
+        const newName = prompt("Ubah Nama Petugas:", oldName);
+        
+        if (newName && newName.trim() !== "" && newName.trim().toUpperCase() !== oldName) {
+            const formattedNewName = newName.trim().toUpperCase();
+            if (db.officers.includes(formattedNewName)) {
+                alert("Nama tersebut sudah ada!");
+                return;
+            }
+            
+            // Update daftar petugas
+            db.officers[index] = formattedNewName;
+            
+            // Pindahkan data jadwal jika ada
+            if (db.schedule[oldName]) {
+                db.schedule[formattedNewName] = db.schedule[oldName];
+                delete db.schedule[oldName];
+            }
+            
+            renderNurseManagerList();
+            renderTable();
+            showToast("Nama Petugas Berhasil Diubah!");
+        }
     }
 
     function initFilters() {
@@ -394,16 +468,12 @@
         const weekSel = document.getElementById('select-week');
         weekSel.innerHTML = "";
 
-        let firstDay = new Date(year, month, 1);
         let current = new Date(year, month, 1);
-        
         while(current.getDay() !== 1) {
             current.setDate(current.getDate() - 1);
         }
 
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
         let weekNum = 1;
-
         for(let i = 0; i < 6; i++) {
             let weekStart = new Date(current);
             let weekEnd = new Date(current);
@@ -422,7 +492,6 @@
         viewMode = mode;
         document.getElementById('view-monthly').className = mode === 'monthly' ? 'btn-toggle active' : 'btn-toggle inactive';
         document.getElementById('view-weekly').className = mode === 'weekly' ? 'btn-toggle active' : 'btn-toggle inactive';
-        
         document.getElementById('select-week').classList.toggle('hidden', mode === 'monthly');
         renderTable();
     }
@@ -447,7 +516,6 @@
         const search = document.getElementById('search-nurse').value.toLowerCase();
         
         let daysToRender = [];
-        
         if (viewMode === 'weekly') {
             const weekVal = document.getElementById('select-week').value;
             if(weekVal) {
@@ -479,22 +547,13 @@
             }
         }
 
-        const first = daysToRender[0];
-        const last = daysToRender[daysToRender.length - 1];
-        let periodLabel = `${monthNames[month]} ${year}`;
-        if (viewMode === 'weekly' && first.month !== last.month) {
-            periodLabel = `${monthNames[first.month]} - ${monthNames[last.month]} ${last.year}`;
-        }
+        const periodLabel = `${monthNames[month]} ${year}`;
         document.getElementById('export-period-label').innerText = `Puskesmas Sampanahan • ${periodLabel}`;
 
         let headHtml = `<tr><th class="sticky-col">Nama Perawat</th>`;
         daysToRender.forEach(d => {
             const sundayClass = d.isSunday ? 'cell-sunday' : '';
-            headHtml += `
-                <th class="${sundayClass}">
-                    <div class="mb-1">${d.dayName}</div>
-                    <div class="text-[11px]">${d.day}</div>
-                </th>`;
+            headHtml += `<th class="${sundayClass}"><div class="mb-1">${d.dayName}</div><div class="text-[11px]">${d.day}</div></th>`;
         });
         headHtml += `<th class="summary-header">TOTAL</th></tr>`;
         document.getElementById('table-head').innerHTML = headHtml;
@@ -508,20 +567,14 @@
             filteredOfficers.forEach(name => {
                 let rowCount = 0;
                 bodyHtml += `<tr><td class="sticky-col uppercase truncate">${name}</td>`;
-                
                 daysToRender.forEach(d => {
                     const shiftValue = (db.schedule[name] && db.schedule[name][d.day]) ? db.schedule[name][d.day] : "";
                     if(shiftValue) rowCount++;
                     const sundayClass = d.isSunday ? 'cell-sunday' : '';
-                    
                     bodyHtml += `
                     <td class="${sundayClass} ${shiftValue ? 'cell-'+shiftValue : ''}">
                         <select onchange="updateShift('${name}', ${d.day}, this, ${d.isSunday})" class="shift-input ${sundayClass} ${shiftValue ? 'cell-'+shiftValue : ''}">
-                            <option value=""></option>
-                            <option value="P" ${shiftValue === 'P' ? 'selected' : ''}>P</option>
-                            <option value="S" ${shiftValue === 'S' ? 'selected' : ''}>S</option>
-                            <option value="M" ${shiftValue === 'M' ? 'selected' : ''}>M</option>
-                            <option value="POLI" ${shiftValue === 'POLI' ? 'selected' : ''}>POLI</option>
+                            <option value=""></option><option value="P" ${shiftValue === 'P' ? 'selected' : ''}>P</option><option value="S" ${shiftValue === 'S' ? 'selected' : ''}>S</option><option value="M" ${shiftValue === 'M' ? 'selected' : ''}>M</option><option value="POLI" ${shiftValue === 'POLI' ? 'selected' : ''}>POLI</option>
                         </select>
                     </td>`;
                 });
@@ -544,17 +597,12 @@
         const btn = document.getElementById('btn-save');
         btn.disabled = true;
         btn.innerHTML = `<span>⏳</span> Menyimpan...`;
-
         try {
             const resp = await fetch(WEB_APP_URL, {
                 method: "POST",
                 body: JSON.stringify({ 
                     action: 'updateFullConfig', 
-                    payload: { 
-                        config: db.config, 
-                        officers: db.officers, 
-                        schedule: db.schedule
-                    } 
+                    payload: { config: db.config, officers: db.officers, schedule: db.schedule } 
                 })
             });
             const result = await resp.json();
@@ -571,19 +619,14 @@
         const month = monthNames[document.getElementById('select-month').value];
         const year = document.getElementById('select-year').value;
         const table = document.getElementById("main-table").cloneNode(true);
-        
         table.querySelectorAll('select').forEach(sel => {
             const txt = document.createTextNode(sel.value);
             sel.parentNode.replaceChild(txt, sel);
         });
-
         const wb = XLSX.utils.table_to_book(table, { sheet: "Jadwal" });
         const ws = wb.Sheets["Jadwal"];
         const dataArr = XLSX.utils.sheet_to_json(ws, { header: 1 });
-        dataArr.push([]);
-        dataArr.push([`DIHASILKAN PADA: ${new Date().toLocaleString()}`]);
-        dataArr.push([`© 2024 Puskesmas Sampanahan. Hak Cipta Dilindungi.`]);
-        
+        dataArr.push([], [`DIHASILKAN PADA: ${new Date().toLocaleString()}`], [`© 2024 Puskesmas Sampanahan. Hak Cipta Dilindungi.`]);
         const newWs = XLSX.utils.aoa_to_sheet(dataArr);
         wb.Sheets["Jadwal"] = newWs;
         XLSX.writeFile(wb, `Jadwal_Sampanahan_${month}_${year}.xlsx`);
@@ -593,58 +636,39 @@
         const area = document.getElementById('capture-area');
         const btn = event.currentTarget;
         const originalText = btn.innerHTML;
-        
-        const month = monthNames[document.getElementById('select-month').value];
-        const year = document.getElementById('select-year').value;
-
-        document.getElementById('export-header').classList.remove('hidden');
-        document.getElementById('export-legend').classList.remove('hidden');
-        document.getElementById('capture-footer').style.display = 'flex';
-        document.getElementById('export-period-label').innerText = `Puskesmas Sampanahan • ${month} ${year}`;
-        
         btn.innerHTML = "⏳ Memproses..."; btn.disabled = true;
-
         const originalScrollX = window.scrollX;
         const originalScrollY = window.scrollY;
         window.scrollTo(0, 0);
-
         const stickyCols = document.querySelectorAll('.sticky-col');
         const headers = document.querySelectorAll('th');
         const summaryHeaders = document.querySelectorAll('.summary-header');
         const tableWrapper = document.querySelector('.table-wrapper');
         const table = document.getElementById('main-table');
-        
         const originalWrapperStyle = tableWrapper.getAttribute('style') || '';
         const originalAreaStyle = area.getAttribute('style') || '';
-        
+        document.getElementById('export-header').classList.remove('hidden');
+        document.getElementById('export-legend').classList.remove('hidden');
+        document.getElementById('capture-footer').style.display = 'flex';
         tableWrapper.style.maxHeight = 'none';
         tableWrapper.style.overflow = 'visible';
         area.style.width = table.scrollWidth + 40 + 'px'; 
         area.style.maxWidth = 'none';
-        
         summaryHeaders.forEach(el => el.style.display = 'none');
         stickyCols.forEach(el => el.style.position = 'static');
         headers.forEach(el => el.style.position = 'static');
-
         try {
             const canvas = await html2canvas(area, { 
-                scale: 2, 
-                useCORS: true, 
-                backgroundColor: "#ffffff",
-                logging: false,
-                width: area.scrollWidth,
-                height: area.scrollHeight,
-                windowWidth: area.scrollWidth,
-                windowHeight: area.scrollHeight
+                scale: 2, useCORS: true, backgroundColor: "#ffffff", logging: false,
+                width: area.scrollWidth, height: area.scrollHeight,
+                windowWidth: area.scrollWidth, windowHeight: area.scrollHeight
             });
-            
             const link = document.createElement('a');
-            link.download = `Jadwal_Puskesmas_Sampanahan_${Date.now()}.png`;
+            link.download = `Jadwal_Sampanahan_${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
             showToast("Gambar berhasil disimpan!");
         } catch (e) {
-            console.error(e);
             alert("Gagal membuat gambar.");
         } finally {
             document.getElementById('export-header').classList.add('hidden');
