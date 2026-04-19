@@ -17,233 +17,352 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #f8fafc;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
         }
-        .setting-panel-content { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0, 1, 0, 1); }
-        .setting-panel-content.open { max-height: 5000px; transition: max-height 1s ease-in-out; }
+        .setting-panel-content { 
+            max-height: 0; 
+            overflow: hidden; 
+            transition: max-height 0.5s cubic-bezier(0, 1, 0, 1); 
+        }
+        .setting-panel-content.open { 
+            max-height: 5000px; 
+            transition: max-height 1.2s ease-in-out; 
+        }
         .chevron-icon { transition: transform 0.3s; }
         .chevron-icon.rotate { transform: rotate(180deg); }
         
-        .rekap-wrapper { width: 100%; overflow-x: auto; border-radius: 16px; background: white; border: 1px solid #f1f5f9; }
-        .editor-table { border-collapse: collapse; min-width: 900px; font-size: 11px; }
-        .editor-table th, .editor-table td { border: 1px solid #f1f5f9; text-align: center; padding: 12px 6px; }
-        .editor-table th { background: #f8fafc; font-weight: 800; color: #64748b; text-transform: uppercase; font-size: 9px; }
+        .rekap-wrapper { 
+            width: 100%; 
+            overflow-x: auto; 
+            border-radius: 20px; 
+            background: white; 
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+        }
+        .editor-table { border-collapse: collapse; min-width: 1000px; font-size: 11px; }
+        .editor-table th, .editor-table td { border: 1px solid #f1f5f9; text-align: center; padding: 10px 4px; }
+        .editor-table th { background: #f8fafc; font-weight: 800; color: #64748b; text-transform: uppercase; font-size: 9px; letter-spacing: 0.05em; }
         
         .sticky-col { 
-            position: sticky; left: 0; background: white !important; z-index: 10; 
-            min-width: 120px; text-align: left !important; padding-left: 14px !important; 
-            border-right: 2px solid #f1f5f9 !important; font-weight: 700; color: #1e293b;
+            position: sticky; 
+            left: 0; 
+            background: white !important; 
+            z-index: 10; 
+            min-width: 140px; 
+            text-align: left !important; 
+            padding-left: 16px !important; 
+            border-right: 2px solid #f1f5f9 !important; 
+            font-weight: 700; 
+            color: #0f172a;
         }
 
-        .scan-choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .scan-choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .scan-choice-item { 
-            border: 2px solid #f1f5f9; padding: 16px; border-radius: 20px; text-align: center; 
-            cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: white;
+            border: 2px solid #f1f5f9; 
+            padding: 24px; 
+            border-radius: 24px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            background: white;
         }
-        .scan-choice-item.active { border-color: #0d9488; background: #f0fdfa; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(13, 148, 136, 0.1); }
-        .scan-choice-item p { font-size: 10px; font-weight: 800; text-transform: uppercase; margin-top: 8px; color: #64748b; }
-        .scan-choice-item.active p { color: #0d9488; }
+        .scan-choice-item.active { 
+            border-color: var(--accent); 
+            background: #f0fdfa; 
+            transform: translateY(-4px); 
+            box-shadow: 0 12px 20px -5px rgba(13, 148, 136, 0.15); 
+        }
+        .scan-choice-item p { font-size: 10px; font-weight: 800; text-transform: uppercase; margin-top: 12px; color: #64748b; }
+        .scan-choice-item.active p { color: var(--accent); }
 
-        .nurse-pill { background: #f1f5f9; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-weight: 700; color: #334155; font-size: 11px; border: 1px solid #e2e8f0; }
-        .btn-action-nurse { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: 0.2s; }
+        .nurse-pill { 
+            background: white; 
+            border-radius: 16px; 
+            padding: 12px 16px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            margin-bottom: 8px; 
+            font-weight: 700; 
+            color: #334155; 
+            font-size: 12px; 
+            border: 1px solid #e2e8f0;
+            transition: 0.2s;
+        }
+        .nurse-pill:hover { border-color: #cbd5e1; transform: translateX(2px); }
+        .btn-action-nurse { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; transition: 0.2s; }
         .btn-delete-nurse { color: #ef4444; background: #fef2f2; }
-        .btn-face-nurse { color: #0d9488; background: #f0fdfa; }
-        .btn-face-nurse.has-face { background: #0d9488; color: white; }
+        .btn-delete-nurse:hover { background: #fee2e2; }
+        .btn-face-nurse { color: var(--accent); background: #f0fdfa; }
+        .btn-face-nurse.has-face { background: var(--accent); color: white; }
 
         .cell-P { background-color: #f0fdfa !important; color: #0d9488 !important; }
         .cell-S { background-color: #fffbeb !important; color: #d97706 !important; }
         .cell-M { background-color: #eff6ff !important; color: #2563eb !important; }
 
-        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e2e8f0; transition: .3s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        input:checked + .slider { background-color: #0d9488; }
-        input:checked + .slider:before { transform: translateX(20px); }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(22px); }
 
-        /* Modal Face Capture */
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Toast UI */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { 
+            pointer-events: auto; background: white; border-radius: 16px; padding: 16px 20px; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-left: 4px solid #10b981; 
+            display: flex; align-items: center; gap: 12px; min-width: 280px; transform: translateX(120%); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .toast.show { transform: translateX(0); }
+        .toast-error { border-left-color: #ef4444; }
+
+        /* Camera Modal Overlay */
         .modal-overlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8); 
-            backdrop-filter: blur(8px); z-index: 2500; 
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9); 
+            backdrop-filter: blur(12px); z-index: 2500; 
             display: none; align-items: center; justify-content: center; 
             padding: 20px;
         }
         .modal-card { 
-            background: white; width: 100%; max-width: 420px; 
-            border-radius: 32px; padding: 24px; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: white; width: 100%; max-width: 440px; 
+            border-radius: 40px; padding: 32px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        @keyframes modalPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes modalPop { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
         
         #face-preview-container {
-            width: 100%; aspect-ratio: 3/4; background: #000; border-radius: 20px; overflow: hidden; position: relative;
+            width: 100%; aspect-ratio: 1; background: #000; border-radius: 32px; overflow: hidden; position: relative;
+            margin-bottom: 24px; border: 4px solid #f1f5f9;
         }
         #face-video { width: 100%; height: 100%; object-fit: cover; }
-        .face-overlay { position: absolute; inset: 0; border: 2px dashed rgba(255,255,255,0.5); border-radius: 50%; margin: 20%; pointer-events: none; }
+        .face-overlay { 
+            position: absolute; inset: 0; border: 3px dashed rgba(255,255,255,0.4); 
+            border-radius: 50%; margin: 15%; pointer-events: none; 
+            box-shadow: 0 0 0 999px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
 
-<div id="loading" class="hidden fixed inset-0 bg-white/80 backdrop-blur-sm z-[2000] flex flex-col items-center justify-center text-center px-6">
-    <div class="w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
-    <p class="mt-4 font-bold text-slate-700 uppercase tracking-widest text-xs">Singkronisasi Cloud...</p>
+<!-- NOTIFICATIONS -->
+<div id="toast-container"></div>
+
+<!-- LOADING SCREEN -->
+<div id="loading" class="hidden fixed inset-0 bg-white/90 backdrop-blur-md z-[3000] flex flex-col items-center justify-center text-center px-6">
+    <div class="relative w-16 h-16">
+        <div class="absolute inset-0 border-4 border-teal-100 rounded-full"></div>
+        <div class="absolute inset-0 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+    <p class="mt-6 font-black text-slate-800 uppercase tracking-[0.2em] text-[10px]">Sinkronisasi Cloud...</p>
 </div>
 
 <!-- MODAL PENDAFTARAN WAJAH -->
 <div id="modal-face-reg" class="modal-overlay" onclick="if(event.target === this) closeFaceModal()">
     <div class="modal-card">
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex justify-between items-center mb-6">
             <div>
-                <h3 class="font-black text-slate-800 text-sm uppercase tracking-tight">Pendaftaran Wajah</h3>
-                <p id="target-nurse-name" class="text-[10px] font-bold text-teal-600 uppercase">Tn. Ahmad</p>
+                <h3 class="font-black text-slate-900 text-base uppercase tracking-tight">Pendaftaran Wajah</h3>
+                <p id="target-nurse-name" class="text-[11px] font-bold text-teal-600 uppercase tracking-widest mt-1">NAMA PERAWAT</p>
             </div>
-            <button onclick="closeFaceModal()" class="text-slate-300 hover:text-slate-500">✕</button>
+            <button onclick="closeFaceModal()" class="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-full text-slate-400 hover:text-slate-600 transition-colors">✕</button>
         </div>
         
-        <div id="face-preview-container" class="mb-6">
+        <div id="face-preview-container">
             <video id="face-video" autoplay playsinline muted></video>
             <div class="face-overlay"></div>
             <canvas id="face-canvas" class="hidden"></canvas>
         </div>
 
-        <div class="space-y-3">
-            <button onclick="captureFace()" id="btn-capture" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-[10px] uppercase shadow-lg active:scale-95 transition-all">Ambil Foto Wajah</button>
-            <p class="text-center text-[8px] text-slate-400 font-bold uppercase leading-relaxed">Pastikan wajah berada di tengah lingkaran dan pencahayaan cukup terang.</p>
+        <div class="space-y-4">
+            <button onclick="captureFace()" id="btn-capture" class="w-full bg-slate-900 text-white py-5 rounded-[24px] font-black text-xs uppercase shadow-xl hover:bg-slate-800 active:scale-95 transition-all">Ambil Foto Wajah</button>
+            <div class="flex items-start gap-3 p-4 bg-amber-50 rounded-2xl border border-amber-100">
+                <span class="text-amber-500 text-sm">💡</span>
+                <p class="text-[9px] text-amber-700 font-bold uppercase leading-relaxed">Posisikan wajah tepat di lingkaran tengah dengan pencahayaan yang cukup untuk hasil optimal.</p>
+            </div>
         </div>
     </div>
 </div>
 
-<div id="settings-auth-container" class="fixed inset-0 z-[1500] flex flex-col items-center justify-center bg-slate-900 text-center text-white px-6">
-    <div class="w-24 h-24 bg-slate-800 rounded-[40px] flex items-center justify-center text-4xl mb-6 shadow-xl border border-slate-700">🔐</div>
-    <h3 class="font-extrabold text-2xl mb-2 uppercase tracking-tighter">Panel Administrator</h3>
-    <p class="text-slate-500 text-xs mb-10 uppercase tracking-widest">Akses Terbatas</p>
-    <input type="password" id="settings-pin-input" maxlength="4" class="w-full max-w-[280px] bg-slate-800 border-2 border-slate-700 p-5 rounded-3xl text-center text-4xl font-black text-teal-400 outline-none focus:border-teal-500 transition-all mb-6" placeholder="••••">
-    <button onclick="verifySettingsPin()" class="w-full max-w-[280px] bg-teal-600 text-white font-black py-5 rounded-3xl text-xs uppercase shadow-xl active:scale-95 transition-all">Verifikasi & Masuk</button>
+<!-- LOGIN SCREEN -->
+<div id="settings-auth-container" class="fixed inset-0 z-[1500] flex flex-col items-center justify-center bg-slate-950 text-center text-white px-6">
+    <div class="mb-12">
+        <div class="w-28 h-28 bg-gradient-to-br from-teal-500 to-emerald-700 rounded-[44px] flex items-center justify-center text-5xl mb-8 shadow-2xl shadow-teal-900/40 border border-teal-400/20 mx-auto transform -rotate-6">🔐</div>
+        <h3 class="font-black text-3xl mb-3 tracking-tighter">ADMIN CONSOLE</h3>
+        <p class="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em]">Restricted Access Area</p>
+    </div>
+    
+    <div class="w-full max-w-[320px] space-y-6">
+        <div class="relative">
+            <input type="password" id="settings-pin-input" maxlength="4" class="w-full bg-slate-900/50 border-2 border-slate-800 p-6 rounded-[32px] text-center text-5xl font-black text-teal-400 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all tracking-[0.5em]" placeholder="••••">
+        </div>
+        <button onclick="verifySettingsPin()" class="w-full bg-teal-600 hover:bg-teal-500 text-white font-black py-6 rounded-[32px] text-xs uppercase shadow-2xl shadow-teal-900/20 active:scale-[0.98] transition-all">
+            Unlock Console
+        </button>
+    </div>
+    
+    <p class="mt-20 text-[8px] text-slate-600 font-bold uppercase tracking-widest">Puskesmas Sampanahan &copy; 2024</p>
 </div>
 
+<!-- MAIN DASHBOARD -->
 <div id="settings-protected-content" class="hidden min-h-screen pb-40">
-    <header class="bg-slate-900 p-6 pt-12 pb-10 text-white flex justify-between items-end sticky top-0 z-50 shadow-xl border-b border-slate-800">
+    <header class="bg-white/80 backdrop-blur-xl p-6 pt-10 pb-8 flex justify-between items-center sticky top-0 z-[100] border-b border-slate-100">
         <div>
-            <h2 class="text-2xl font-black uppercase tracking-tighter italic">Admin Console</h2>
-            <p class="text-[9px] font-bold text-slate-500 tracking-widest uppercase">Konfigurasi Sistem Terpusat</p>
+            <h2 class="text-xl font-black uppercase tracking-tighter text-slate-900 italic">Console <span class="text-teal-600">v2.0</span></h2>
+            <p class="text-[9px] font-extrabold text-slate-400 tracking-[0.2em] uppercase mt-0.5">Control Center Puskesmas</p>
         </div>
-        <button onclick="window.location.reload()" class="bg-white/10 p-3 rounded-2xl hover:bg-rose-500/20 transition-all">🚪</button>
+        <div class="flex gap-2">
+            <button onclick="window.location.reload()" class="bg-slate-100 p-3 rounded-2xl hover:bg-rose-50 text-xl shadow-sm transition-all" title="Logout">🚪</button>
+        </div>
     </header>
 
-    <div class="max-w-4xl mx-auto p-4 space-y-4">
+    <div class="max-w-5xl mx-auto p-4 md:p-8 space-y-6">
         
-        <!-- 1. METODE SCAN -->
-        <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
-            <div onclick="togglePanel('panel-scan-method')" class="p-6 flex justify-between items-center cursor-pointer hover:bg-slate-50">
-                <div class="flex items-center gap-4"><span class="text-2xl">🔍</span><h4 class="font-black text-xs uppercase text-slate-700 tracking-wider">Metode Presensi</h4></div>
-                <span id="icon-panel-scan-method" class="chevron-icon text-slate-300 font-bold text-xs">▼</span>
-            </div>
-            <div id="panel-scan-method" class="setting-panel-content">
-                <div class="px-6 pb-6">
-                    <div class="scan-choice-grid">
-                        <div id="choice-manual" onclick="setScanMethod('manual')" class="scan-choice-item">
-                            <span class="text-3xl">📱</span>
-                            <p>Manual Scan 1 QR</p>
-                        </div>
-                        <div id="choice-face" onclick="setScanMethod('face')" class="scan-choice-item">
-                            <span class="text-3xl">🤳</span>
-                            <p>Scan QR Face</p>
+        <!-- ROW 1: QUICK ACTIONS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 1. METODE SCAN -->
+            <div class="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden group">
+                <div onclick="togglePanel('panel-scan-method')" class="p-8 flex justify-between items-center cursor-pointer hover:bg-slate-50/50 transition-colors">
+                    <div class="flex items-center gap-5">
+                        <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🔍</div>
+                        <h4 class="font-black text-xs uppercase text-slate-800 tracking-wider">Metode Presensi</h4>
+                    </div>
+                    <span id="icon-panel-scan-method" class="chevron-icon text-slate-300 font-bold text-xs">▼</span>
+                </div>
+                <div id="panel-scan-method" class="setting-panel-content">
+                    <div class="px-8 pb-8">
+                        <div class="scan-choice-grid">
+                            <div id="choice-manual" onclick="setScanMethod('manual')" class="scan-choice-item">
+                                <span class="text-3xl">📱</span>
+                                <p>Manual QR</p>
+                            </div>
+                            <div id="choice-face" onclick="setScanMethod('face')" class="scan-choice-item">
+                                <span class="text-3xl">🤳</span>
+                                <p>Face ID QR</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 2. PENGATURAN NOTIFIKASI -->
-        <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
-            <div onclick="togglePanel('panel-notif')" class="p-6 flex justify-between items-center cursor-pointer hover:bg-slate-50">
-                <div class="flex items-center gap-4"><span class="text-2xl">🔔</span><h4 class="font-black text-xs uppercase text-slate-700 tracking-wider">Notifikasi & Suara</h4></div>
-                <span id="icon-panel-notif" class="chevron-icon text-slate-300 font-bold text-xs">▼</span>
-            </div>
-            <div id="panel-notif" class="setting-panel-content">
-                <div class="px-6 pb-6 space-y-4">
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                        <div>
-                            <p class="font-black text-[10px] uppercase text-slate-700">Notifikasi Suara (Voice)</p>
-                            <p class="text-[9px] text-slate-400">Ucapkan "Presensi Berhasil" setelah scan</p>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" id="cfg-voice">
-                            <span class="slider"></span>
-                        </label>
+            <!-- 2. PENGATURAN NOTIFIKASI -->
+            <div class="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden group">
+                <div onclick="togglePanel('panel-notif')" class="p-8 flex justify-between items-center cursor-pointer hover:bg-slate-50/50 transition-colors">
+                    <div class="flex items-center gap-5">
+                        <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🔔</div>
+                        <h4 class="font-black text-xs uppercase text-slate-800 tracking-wider">Notifikasi & Feedback</h4>
                     </div>
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                        <div>
-                            <p class="font-black text-[10px] uppercase text-slate-700">Notifikasi Pop-up</p>
-                            <p class="text-[9px] text-slate-400">Tampilkan pesan sukses/gagal di layar</p>
+                    <span id="icon-panel-notif" class="chevron-icon text-slate-300 font-bold text-xs">▼</span>
+                </div>
+                <div id="panel-notif" class="setting-panel-content">
+                    <div class="px-8 pb-8 space-y-4">
+                        <div class="flex items-center justify-between p-5 bg-slate-50 rounded-[24px] border border-slate-100">
+                            <div>
+                                <p class="font-black text-[10px] uppercase text-slate-700">Voice Guidance</p>
+                                <p class="text-[9px] text-slate-400 mt-0.5">Berikan feedback suara saat presensi</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="cfg-voice">
+                                <span class="slider"></span>
+                            </label>
                         </div>
-                        <label class="switch">
-                            <input type="checkbox" id="cfg-popup">
-                            <span class="slider"></span>
-                        </label>
+                        <div class="flex items-center justify-between p-5 bg-slate-50 rounded-[24px] border border-slate-100">
+                            <div>
+                                <p class="font-black text-[10px] uppercase text-slate-700">Visual Pop-up</p>
+                                <p class="text-[9px] text-slate-400 mt-0.5">Tampilkan modal sukses di layar</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="cfg-popup">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- 3. MANAJEMEN PERAWAT -->
-        <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
-            <div onclick="togglePanel('panel-nurses')" class="p-6 flex justify-between items-center cursor-pointer hover:bg-slate-50">
-                <div class="flex items-center gap-4"><span class="text-2xl">🧑‍⚕️</span><h4 class="font-black text-xs uppercase text-slate-700 tracking-wider">Daftar Perawat</h4></div>
+        <div class="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden">
+            <div onclick="togglePanel('panel-nurses')" class="p-8 flex justify-between items-center cursor-pointer hover:bg-slate-50/50">
+                <div class="flex items-center gap-5">
+                    <div class="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-2xl">🧑‍⚕️</div>
+                    <h4 class="font-black text-xs uppercase text-slate-800 tracking-wider">Daftar Tenaga Medis</h4>
+                </div>
                 <span id="icon-panel-nurses" class="chevron-icon text-slate-300 font-bold text-xs">▼</span>
             </div>
             <div id="panel-nurses" class="setting-panel-content">
-                <div class="px-6 pb-6 space-y-4">
-                    <div class="flex gap-2">
-                        <input type="text" id="new-nurse-name" class="flex-1 p-4 bg-slate-50 border rounded-2xl outline-none font-bold text-xs uppercase" placeholder="Nama Perawat Baru...">
-                        <button onclick="addNurse()" class="bg-teal-600 text-white px-6 rounded-2xl font-black text-[10px] uppercase">Tambah</button>
+                <div class="px-8 pb-8 space-y-6">
+                    <div class="flex gap-3">
+                        <input type="text" id="new-nurse-name" class="flex-1 p-5 bg-slate-50 border border-slate-200 rounded-[24px] outline-none font-bold text-xs uppercase focus:border-teal-500 focus:bg-white transition-all" placeholder="Input nama perawat baru...">
+                        <button onclick="addNurse()" class="bg-teal-600 hover:bg-teal-700 text-white px-8 rounded-[24px] font-black text-[10px] uppercase transition-all shadow-lg shadow-teal-100">Tambah</button>
                     </div>
-                    <div id="nurse-list-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                    <div id="nurse-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
                 </div>
             </div>
         </div>
 
         <!-- 4. JADWAL JAGA -->
-        <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
-            <div onclick="togglePanel('panel-sch')" class="p-6 flex justify-between items-center cursor-pointer hover:bg-slate-50">
-                <div class="flex items-center gap-4"><span class="text-2xl">📅</span><h4 class="font-black text-xs uppercase text-slate-700 tracking-wider">Editor Jadwal</h4></div>
+        <div class="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden">
+            <div onclick="togglePanel('panel-sch')" class="p-8 flex justify-between items-center cursor-pointer hover:bg-slate-50/50">
+                <div class="flex items-center gap-5">
+                    <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-2xl">📅</div>
+                    <h4 class="font-black text-xs uppercase text-slate-800 tracking-wider">Penyunting Jadwal Shift</h4>
+                </div>
                 <span id="icon-panel-sch" class="chevron-icon text-slate-300 font-bold text-xs">▼</span>
             </div>
             <div id="panel-sch" class="setting-panel-content">
-                <div class="px-6 pb-6">
+                <div class="px-8 pb-8">
+                    <div class="mb-4 flex items-center justify-between">
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Pilih shift (P/S/M) untuk perawat pada tanggal tertentu</p>
+                        <button onclick="renderScheduleEditor()" class="text-[9px] font-bold text-teal-600 uppercase">Refresh Grid</button>
+                    </div>
                     <div id="editor-jadwal-container" class="rekap-wrapper"></div>
                 </div>
             </div>
         </div>
 
         <!-- 5. PENGATURAN JAM SHIFT -->
-        <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
-            <div onclick="togglePanel('panel-times')" class="p-6 flex justify-between items-center cursor-pointer hover:bg-slate-50">
-                <div class="flex items-center gap-4"><span class="text-2xl">🕒</span><h4 class="font-black text-xs uppercase text-slate-700 tracking-wider">Waktu Kerja Shift</h4></div>
+        <div class="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden">
+            <div onclick="togglePanel('panel-times')" class="p-8 flex justify-between items-center cursor-pointer hover:bg-slate-50/50">
+                <div class="flex items-center gap-5">
+                    <div class="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-2xl">🕒</div>
+                    <h4 class="font-black text-xs uppercase text-slate-800 tracking-wider">Konfigurasi Jam Kerja</h4>
+                </div>
                 <span id="icon-panel-times" class="chevron-icon text-slate-300 font-bold text-xs">▼</span>
             </div>
             <div id="panel-times" class="setting-panel-content">
-                <div class="px-6 pb-6 space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="p-4 bg-slate-50 rounded-2xl border text-center">
-                            <p class="font-black text-[10px] uppercase text-teal-600 mb-2">Shift Pagi</p>
-                            <div class="flex items-center gap-2">
-                                <input type="time" id="time-pagi-start" class="w-full p-2 rounded-lg border text-xs">
-                                <input type="time" id="time-pagi-end" class="w-full p-2 rounded-lg border text-xs">
+                <div class="px-8 pb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="p-6 bg-emerald-50/50 rounded-[32px] border border-emerald-100 text-center">
+                            <p class="font-black text-[10px] uppercase text-emerald-600 mb-4 tracking-widest">Shift Pagi</p>
+                            <div class="flex items-center gap-3">
+                                <input type="time" id="time-pagi-start" class="w-full p-3 rounded-xl border border-emerald-100 text-xs font-bold text-slate-700 outline-none focus:border-emerald-400">
+                                <span class="text-emerald-200">/</span>
+                                <input type="time" id="time-pagi-end" class="w-full p-3 rounded-xl border border-emerald-100 text-xs font-bold text-slate-700 outline-none focus:border-emerald-400">
                             </div>
                         </div>
-                        <div class="p-4 bg-slate-50 rounded-2xl border text-center">
-                            <p class="font-black text-[10px] uppercase text-amber-600 mb-2">Shift Siang</p>
-                            <div class="flex items-center gap-2">
-                                <input type="time" id="time-siang-start" class="w-full p-2 rounded-lg border text-xs">
-                                <input type="time" id="time-siang-end" class="w-full p-2 rounded-lg border text-xs">
+                        <div class="p-6 bg-amber-50/50 rounded-[32px] border border-amber-100 text-center">
+                            <p class="font-black text-[10px] uppercase text-amber-600 mb-4 tracking-widest">Shift Siang</p>
+                            <div class="flex items-center gap-3">
+                                <input type="time" id="time-siang-start" class="w-full p-3 rounded-xl border border-amber-100 text-xs font-bold text-slate-700 outline-none focus:border-amber-400">
+                                <span class="text-amber-200">/</span>
+                                <input type="time" id="time-siang-end" class="w-full p-3 rounded-xl border border-amber-100 text-xs font-bold text-slate-700 outline-none focus:border-amber-400">
                             </div>
                         </div>
-                        <div class="p-4 bg-slate-50 rounded-2xl border text-center">
-                            <p class="font-black text-[10px] uppercase text-blue-600 mb-2">Shift Malam</p>
-                            <div class="flex items-center gap-2">
-                                <input type="time" id="time-malam-start" class="w-full p-2 rounded-lg border text-xs">
-                                <input type="time" id="time-malam-end" class="w-full p-2 rounded-lg border text-xs">
+                        <div class="p-6 bg-blue-50/50 rounded-[32px] border border-blue-100 text-center">
+                            <p class="font-black text-[10px] uppercase text-blue-600 mb-4 tracking-widest">Shift Malam</p>
+                            <div class="flex items-center gap-3">
+                                <input type="time" id="time-malam-start" class="w-full p-3 rounded-xl border border-blue-100 text-xs font-bold text-slate-700 outline-none focus:border-blue-400">
+                                <span class="text-blue-200">/</span>
+                                <input type="time" id="time-malam-end" class="w-full p-3 rounded-xl border border-blue-100 text-xs font-bold text-slate-700 outline-none focus:border-blue-400">
                             </div>
                         </div>
                     </div>
@@ -252,47 +371,59 @@
         </div>
 
         <!-- 6. KEAMANAN & SISTEM -->
-        <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
-            <div onclick="togglePanel('panel-sec')" class="p-6 flex justify-between items-center cursor-pointer hover:bg-slate-50">
-                <div class="flex items-center gap-4"><span class="text-2xl">🔐</span><h4 class="font-black text-xs uppercase text-slate-700 tracking-wider">Keamanan & Sistem</h4></div>
+        <div class="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden">
+            <div onclick="togglePanel('panel-sec')" class="p-8 flex justify-between items-center cursor-pointer hover:bg-slate-50/50">
+                <div class="flex items-center gap-5">
+                    <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-2xl">🛠️</div>
+                    <h4 class="font-black text-xs uppercase text-slate-800 tracking-wider">Sistem & Keamanan</h4>
+                </div>
                 <span id="icon-panel-sec" class="chevron-icon text-slate-300 font-bold text-xs">▼</span>
             </div>
             <div id="panel-sec" class="setting-panel-content">
-                <div class="px-6 pb-6 space-y-6">
-                    <div class="grid grid-cols-2 gap-4 font-black text-[10px] uppercase">
-                        <div>Admin PIN<input type="text" id="cfg-admin-pin" class="w-full p-4 border rounded-2xl bg-slate-50 mt-1 outline-none focus:border-teal-500"></div>
-                        <div>Chat PIN<input type="text" id="cfg-chat-pin" class="w-full p-4 border rounded-2xl bg-slate-50 mt-1 outline-none focus:border-teal-500"></div>
+                <div class="px-8 pb-8 space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-black text-[10px] uppercase tracking-widest">
+                        <div>
+                            <p class="mb-2 text-slate-400">Admin Login PIN</p>
+                            <input type="text" id="cfg-admin-pin" class="w-full p-5 border border-slate-200 rounded-[24px] bg-slate-50 mt-1 outline-none focus:border-teal-500 focus:bg-white text-base">
+                        </div>
+                        <div>
+                            <p class="mb-2 text-slate-400">Chat & Log PIN</p>
+                            <input type="text" id="cfg-chat-pin" class="w-full p-5 border border-slate-200 rounded-[24px] bg-slate-50 mt-1 outline-none focus:border-teal-500 focus:bg-white text-base">
+                        </div>
                     </div>
-                    <div>
-                        <p class="font-black text-[10px] uppercase mb-1">Isi Data QR Code</p>
-                        <input type="text" id="cfg-qr-data" class="w-full p-4 border rounded-2xl bg-slate-50 font-mono text-xs outline-none focus:border-teal-500">
-                    </div>
-                    <div>
-                        <p class="font-black text-[10px] uppercase mb-1">Warna Aksen Aplikasi</p>
-                        <div class="flex items-center gap-4 p-2 border rounded-2xl bg-slate-50">
-                            <input type="color" id="cfg-theme-color" class="w-12 h-12 rounded-lg bg-transparent cursor-pointer">
-                            <span id="hex-label" class="font-mono text-xs font-bold text-slate-400">#000000</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p class="font-black text-[10px] uppercase text-slate-400 mb-2 tracking-widest">Master QR Key</p>
+                            <input type="text" id="cfg-qr-data" class="w-full p-5 border border-slate-200 rounded-[24px] bg-slate-50 font-mono text-sm outline-none focus:border-teal-500 focus:bg-white">
+                        </div>
+                        <div>
+                            <p class="font-black text-[10px] uppercase text-slate-400 mb-2 tracking-widest">Brand Accent Color</p>
+                            <div class="flex items-center gap-4 p-3 border border-slate-200 rounded-[24px] bg-slate-50">
+                                <input type="color" id="cfg-theme-color" class="w-12 h-12 rounded-xl bg-transparent cursor-pointer border-0 p-0 overflow-hidden">
+                                <span id="hex-label" class="font-mono text-xs font-bold text-slate-500">#0D9488</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="pt-10">
-            <button onclick="saveFullConfigCloud()" id="btn-save-all" class="w-full bg-teal-600 text-white py-6 rounded-[32px] font-black text-sm uppercase shadow-xl shadow-teal-100 active:scale-[0.98] transition-all">
-                🚀 Simpan Konfigurasi Global
+        <div class="pt-12 pb-20">
+            <button onclick="saveFullConfigCloud()" id="btn-save-all" class="w-full bg-teal-600 text-white py-8 rounded-[40px] font-black text-sm uppercase shadow-2xl shadow-teal-200 active:scale-[0.97] transition-all flex items-center justify-center gap-3 hover:bg-teal-700">
+                <span>🚀</span> SIMPAN & PUBLIKASI DATA KE CLOUD
             </button>
         </div>
     </div>
 </div>
 
 <script>
+    // URL Web App (Google Apps Script)
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw-Fl_qSNgqr9oEnn3vUmCtN4bRCZ5M7wz5YMiofUD33pN-kICuL6zubelKVcI_k2luXg/exec";
     
     let db = { 
         officers: [], 
         schedule: {}, 
-        faceData: {}, // Simpan status pendaftaran wajah (key: name, value: true/false atau base64)
+        faceData: {},
         config: { 
             scanMethod: 'manual', 
             voice: true, 
@@ -309,45 +440,73 @@
         } 
     };
 
-    let stream = null;
+    let cameraStream = null;
     let selectedNurseForFace = null;
 
+    // --- UI HELPER ---
     function showLoading(s) { document.getElementById('loading').classList.toggle('hidden', !s); }
     
+    function showToast(msg, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const t = document.createElement('div');
+        t.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
+        t.innerHTML = `<span>${type === 'error' ? '❌' : '✅'}</span> <span class="font-bold text-[11px] uppercase tracking-wider">${msg}</span>`;
+        container.appendChild(t);
+        setTimeout(() => t.classList.add('show'), 10);
+        setTimeout(() => {
+            t.classList.remove('show');
+            setTimeout(() => t.remove(), 500);
+        }, 4000);
+    }
+
     function togglePanel(id) { 
         const el = document.getElementById(id);
         const icon = document.getElementById('icon-' + id);
         const isOpen = el.classList.contains('open');
-        document.querySelectorAll('.setting-panel-content').forEach(p => p.classList.remove('open'));
-        document.querySelectorAll('.chevron-icon').forEach(i => i.classList.remove('rotate'));
-        if(!isOpen) { el.classList.add('open'); icon.classList.add('rotate'); }
+        
+        if(!isOpen) {
+            // Close all first for accordion effect
+            document.querySelectorAll('.setting-panel-content').forEach(p => p.classList.remove('open'));
+            document.querySelectorAll('.chevron-icon').forEach(i => i.classList.remove('rotate'));
+            el.classList.add('open'); 
+            icon.classList.add('rotate');
+        } else {
+            el.classList.remove('open'); 
+            icon.classList.remove('rotate');
+        }
     }
 
+    // --- LOGIC ---
     async function verifySettingsPin() {
-        const pin = document.getElementById('settings-pin-input').value;
+        const pinInput = document.getElementById('settings-pin-input');
+        const pin = pinInput.value;
+        if(pin.length < 4) return;
+
         showLoading(true);
         try {
             const r = await fetch(WEB_APP_URL + "?action=getData");
             const d = await r.json();
+            
             if(pin === d.config.adminPin) {
                 document.getElementById('settings-auth-container').classList.add('hidden');
                 document.getElementById('settings-protected-content').classList.remove('hidden');
+                
                 db.officers = d.officers || [];
                 db.schedule = d.schedule || {};
                 db.faceData = d.faceData || {};
                 if(d.config) db.config = Object.assign(db.config, d.config);
+                
                 fillInputs();
                 renderNurses();
                 renderScheduleEditor();
-            } else { alert("PIN Admin tidak valid!"); }
-        } catch(e) { alert("Gagal terhubung ke Cloud Database."); }
-        finally { showLoading(false); }
-    }
-
-    function setScanMethod(method) {
-        db.config.scanMethod = method;
-        document.getElementById('choice-manual').classList.toggle('active', method === 'manual');
-        document.getElementById('choice-face').classList.toggle('active', method === 'face');
+                showToast("Akses Diterima. Selamat Datang.");
+            } else { 
+                showToast("PIN Admin Tidak Valid!", "error");
+                pinInput.value = "";
+            }
+        } catch(e) { 
+            showToast("Gagal Sinkronisasi dengan Database Cloud.", "error"); 
+        } finally { showLoading(false); }
     }
 
     function fillInputs() {
@@ -359,14 +518,24 @@
         document.getElementById('hex-label').innerText = c.themeColor.toUpperCase();
         document.getElementById('cfg-voice').checked = (c.voice !== false);
         document.getElementById('cfg-popup').checked = (c.popup !== false);
-        document.getElementById('time-pagi-start').value = c.shiftHours.Pagi.start;
-        document.getElementById('time-pagi-end').value = c.shiftHours.Pagi.end;
-        document.getElementById('time-siang-start').value = c.shiftHours.Siang.start;
-        document.getElementById('time-siang-end').value = c.shiftHours.Siang.end;
-        document.getElementById('time-malam-start').value = c.shiftHours.Malam.start;
-        document.getElementById('time-malam-end').value = c.shiftHours.Malam.end;
+        
+        if(c.shiftHours) {
+            document.getElementById('time-pagi-start').value = c.shiftHours.Pagi.start;
+            document.getElementById('time-pagi-end').value = c.shiftHours.Pagi.end;
+            document.getElementById('time-siang-start').value = c.shiftHours.Siang.start;
+            document.getElementById('time-siang-end').value = c.shiftHours.Siang.end;
+            document.getElementById('time-malam-start').value = c.shiftHours.Malam.start;
+            document.getElementById('time-malam-end').value = c.shiftHours.Malam.end;
+        }
+
         setScanMethod(c.scanMethod || 'manual');
         document.getElementById('cfg-theme-color').oninput = (e) => { document.getElementById('hex-label').innerText = e.target.value.toUpperCase(); };
+    }
+
+    function setScanMethod(method) {
+        db.config.scanMethod = method;
+        document.getElementById('choice-manual').classList.toggle('active', method === 'manual');
+        document.getElementById('choice-face').classList.toggle('active', method === 'face');
     }
 
     function renderNurses() {
@@ -374,10 +543,10 @@
         container.innerHTML = db.officers.map((name, idx) => {
             const hasFace = !!db.faceData[name];
             return `
-            <div class="nurse-pill">
+            <div class="nurse-pill group">
                 <span class="uppercase">${name}</span>
-                <div class="flex gap-1">
-                    <button onclick="openFaceModal('${name}')" class="btn-action-nurse btn-face-nurse ${hasFace ? 'has-face' : ''}" title="Daftarkan Wajah">
+                <div class="flex gap-2">
+                    <button onclick="openFaceModal('${name}')" class="btn-action-nurse btn-face-nurse ${hasFace ? 'has-face' : ''}" title="${hasFace ? 'Lihat Wajah' : 'Daftar Wajah'}">
                         ${hasFace ? '👤' : '📸'}
                     </button>
                     <button onclick="deleteNurse(${idx})" class="btn-action-nurse btn-delete-nurse">✕</button>
@@ -387,27 +556,27 @@
         }).join('');
     }
 
-    // LOGIKA PENDAFTARAN WAJAH
+    // --- FACE REGISTRATION ---
     window.openFaceModal = async (name) => {
         selectedNurseForFace = name;
         document.getElementById('target-nurse-name').innerText = name;
         document.getElementById('modal-face-reg').style.display = 'flex';
         
         try {
-            stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: "user", width: 480, height: 640 } 
+            cameraStream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 640 } } 
             });
-            document.getElementById('face-video').srcObject = stream;
+            document.getElementById('face-video').srcObject = cameraStream;
         } catch (e) {
-            alert("Gagal mengakses kamera depan. Pastikan izin kamera aktif.");
+            showToast("Gagal mengakses kamera. Mohon cek izin browser.", "error");
             closeFaceModal();
         }
     };
 
     window.closeFaceModal = () => {
-        if(stream) {
-            stream.getTracks().forEach(track => track.stop());
-            stream = null;
+        if(cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+            cameraStream = null;
         }
         document.getElementById('modal-face-reg').style.display = 'none';
         selectedNurseForFace = null;
@@ -416,75 +585,98 @@
     window.captureFace = () => {
         const video = document.getElementById('face-video');
         const canvas = document.getElementById('face-canvas');
-        const context = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d');
         
-        // Atur ukuran canvas sesuai video
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+        canvas.width = 400;
+        canvas.height = 400;
         
-        // Gambar frame dari video ke canvas
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        // Crop center square
+        const size = Math.min(video.videoWidth, video.videoHeight);
+        const x = (video.videoWidth - size) / 2;
+        const y = (video.videoHeight - size) / 2;
         
-        // Simpan sebagai Base64 (Kualitas rendah agar muat di DB)
-        const faceBase64 = canvas.toDataURL('image/jpeg', 0.5);
+        ctx.drawImage(video, x, y, size, size, 0, 0, 400, 400);
         
-        // Simpan ke database lokal
+        const faceBase64 = canvas.toDataURL('image/jpeg', 0.6);
         db.faceData[selectedNurseForFace] = faceBase64;
         
-        alert("Foto wajah " + selectedNurseForFace + " berhasil diambil. Tekan simpan konfigurasi untuk mengirim ke Cloud.");
+        showToast(`Wajah ${selectedNurseForFace} disimpan secara lokal.`);
         renderNurses();
         closeFaceModal();
     };
 
+    // --- NURSE & SCHEDULE ---
     window.addNurse = () => {
         const input = document.getElementById('new-nurse-name');
-        const name = input.value.trim();
+        const name = input.value.trim().toUpperCase();
         if(!name) return;
-        if(db.officers.includes(name)) return alert("Nama sudah ada!");
+        if(db.officers.includes(name)) return showToast("Nama sudah terdaftar!", "error");
+        
         db.officers.push(name);
         input.value = '';
         renderNurses();
         renderScheduleEditor();
+        showToast("Perawat Baru Ditambahkan.");
     };
 
     window.deleteNurse = (idx) => {
-        if(confirm("Hapus perawat ini dari sistem?")) {
-            const name = db.officers[idx];
+        const name = db.officers[idx];
+        if(confirm(`Hapus ${name} dari sistem secara permanen?`)) {
             db.officers.splice(idx, 1);
             if(db.schedule[name]) delete db.schedule[name];
             if(db.faceData[name]) delete db.faceData[name];
             renderNurses();
             renderScheduleEditor();
+            showToast(`${name} telah dihapus.`);
         }
     };
 
     function renderScheduleEditor() {
-        const c = document.getElementById('editor-jadwal-container');
-        const now = new Date(), days = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
-        let h = `<table class="editor-table"><thead><tr><th class="sticky-col">PERAWAT</th>`;
-        for(let d=1; d<=days; d++) h += `<th>${d}</th>`;
-        h += `</tr></thead><tbody>`;
+        const container = document.getElementById('editor-jadwal-container');
+        const now = new Date();
+        const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        
+        let html = `<table class="editor-table"><thead><tr><th class="sticky-col">PERAWAT</th>`;
+        for(let d=1; d<=daysInMonth; d++) {
+            html += `<th>${d}</th>`;
+        }
+        html += `</tr></thead><tbody>`;
+        
         db.officers.forEach(name => {
-            h += `<tr><td class="sticky-col uppercase font-black text-[10px]">${name}</td>`;
-            for(let d=1; d<=days; d++) {
-                const v = (db.schedule[name] && db.schedule[name][d]) ? db.schedule[name][d] : '';
-                h += `<td class="cell-${v}"><select onchange="updateLocalSch('${name}',${d},this.value,this.parentElement)" class="bg-transparent text-center font-bold w-full outline-none appearance-none cursor-pointer"><option value=""></option><option value="P" ${v==='P'?'selected':''}>P</option><option value="S" ${v==='S'?'selected':''}>S</option><option value="M" ${v==='M'?'selected':''}>M</option></select></td>`;
+            html += `<tr><td class="sticky-col uppercase font-black text-[10px] truncate">${name}</td>`;
+            for(let d=1; d<=daysInMonth; d++) {
+                const val = (db.schedule[name] && db.schedule[name][d]) ? db.schedule[name][d] : '';
+                html += `<td class="cell-${val}">
+                    <select onchange="updateLocalSch('${name}', ${d}, this.value, this.parentElement)" class="bg-transparent text-center font-bold w-full outline-none appearance-none cursor-pointer">
+                        <option value=""></option>
+                        <option value="P" ${val === 'P' ? 'selected' : ''}>P</option>
+                        <option value="S" ${val === 'S' ? 'selected' : ''}>S</option>
+                        <option value="M" ${val === 'M' ? 'selected' : ''}>M</option>
+                    </select>
+                </td>`;
             }
-            h += `</tr>`;
+            html += `</tr>`;
         });
-        c.innerHTML = h + `</tbody></table>`;
+        
+        container.innerHTML = html + `</tbody></table>`;
     }
 
-    function updateLocalSch(n, d, v, cell) {
-        if(!db.schedule[n]) db.schedule[n] = {};
-        db.schedule[n][d] = v;
-        cell.className = v ? 'cell-'+v : '';
-    }
+    window.updateLocalSch = (name, day, val, cell) => {
+        if(!db.schedule[name]) db.schedule[name] = {};
+        db.schedule[name][day] = val;
+        cell.className = val ? 'cell-' + val : '';
+    };
 
+    // --- SAVE TO CLOUD ---
     async function saveFullConfigCloud() {
         const btn = document.getElementById('btn-save-all');
-        btn.innerText = "⏳ SEDANG MENYIMPAN..."; btn.disabled = true; showLoading(true);
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = `<span>⏳</span> MENGIRIM DATA...`;
+        btn.disabled = true;
+        showLoading(true);
 
+        // Update local state from inputs
         db.config.adminPin = document.getElementById('cfg-admin-pin').value;
         db.config.chatPin = document.getElementById('cfg-chat-pin').value;
         db.config.qrData = document.getElementById('cfg-qr-data').value;
@@ -499,7 +691,7 @@
         };
 
         try {
-            const r = await fetch(WEB_APP_URL, {
+            const resp = await fetch(WEB_APP_URL, {
                 method: "POST",
                 body: JSON.stringify({ 
                     action: 'updateFullConfig', 
@@ -507,15 +699,30 @@
                         config: db.config, 
                         officers: db.officers, 
                         schedule: db.schedule,
-                        faceData: db.faceData // Kirim data wajah ke Cloud
+                        faceData: db.faceData
                     } 
                 })
             });
-            const res = await r.json();
-            if(res.status === 'success') { alert("Berhasil! Seluruh konfigurasi dan data wajah telah diperbarui di Cloud."); }
-        } catch(e) { alert("Terjadi kesalahan saat menyimpan ke Cloud."); } 
-        finally { btn.innerText = "🚀 Simpan Konfigurasi Global"; btn.disabled = false; showLoading(false); }
+            const result = await resp.json();
+            if(result.status === 'success') { 
+                showToast("Sinkronisasi Berhasil. Seluruh data Cloud terupdate."); 
+            } else {
+                showToast("Server merespon dengan kegagalan.", "error");
+            }
+        } catch(e) { 
+            showToast("Kesalahan Jaringan. Periksa koneksi internet.", "error"); 
+        } finally { 
+            btn.innerHTML = originalText; 
+            btn.disabled = false; 
+            showLoading(false); 
+        }
     }
+
+    // Auto-login if debug or needed
+    window.onload = () => {
+        // focus pin input
+        document.getElementById('settings-pin-input').focus();
+    };
 </script>
 </body>
 </html>
