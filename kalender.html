@@ -61,7 +61,7 @@
             border-right: 1px solid #f1f5f9;
             font-size: 11px;
             text-align: center;
-            min-width: 55px;
+            min-width: 60px;
         }
         .sticky-col {
             position: sticky;
@@ -94,13 +94,11 @@
             box-shadow: inset 0 0 0 2px var(--accent);
         }
 
-        /* Shift Colors */
         .cell-P { background-color: #f0fdfa !important; color: #0d9488 !important; }
         .cell-S { background-color: #fffbeb !important; color: #d97706 !important; }
         .cell-M { background-color: #eff6ff !important; color: #2563eb !important; }
         .cell-POLI { background-color: #f5f3ff !important; color: #7c3aed !important; }
         
-        /* Sunday Highlighting */
         .cell-sunday { color: var(--sunday) !important; }
         th.cell-sunday { background-color: #fef2f2; }
         td.cell-sunday:not([class*="cell-"]) { background-color: #fffafb; }
@@ -131,7 +129,6 @@
         .btn-toggle.active { background: var(--primary); color: white; }
         .btn-toggle.inactive { background: #f1f5f9; color: #64748b; }
 
-        /* Export Footer Style */
         .export-footer {
             display: none;
             margin-top: 20px;
@@ -155,7 +152,7 @@
             </div>
             <div>
                 <h1 class="text-2xl font-black tracking-tighter uppercase leading-none">Editor <span class="text-teal-600">Jadwal</span></h1>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">Puskesmas Sampanahan • Mode Mingguan/Senin</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">Puskesmas Sampanahan • Mode Mingguan 7 Hari</p>
             </div>
         </div>
 
@@ -182,8 +179,8 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <select id="select-month" onchange="renderTable()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500"></select>
-                    <select id="select-year" onchange="renderTable()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500"></select>
+                    <select id="select-month" onchange="handleMonthYearChange()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500"></select>
+                    <select id="select-year" onchange="handleMonthYearChange()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500"></select>
                     <select id="select-week" onchange="renderTable()" class="hidden bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-teal-500">
                     </select>
                 </div>
@@ -284,31 +281,43 @@
         updateWeekOptions();
     }
 
+    function handleMonthYearChange() {
+        updateWeekOptions();
+        renderTable();
+    }
+
     function updateWeekOptions() {
         const month = parseInt(document.getElementById('select-month').value);
         const year = parseInt(document.getElementById('select-year').value);
         const weekSel = document.getElementById('select-week');
         weekSel.innerHTML = "";
 
-        let date = new Date(year, month, 1);
-        let firstMonday = 1;
-        while (date.getDay() !== 1) {
-            date.setDate(date.getDate() + 1);
-            firstMonday = date.getDate();
+        // Cari hari pertama bulan tersebut
+        let firstDay = new Date(year, month, 1);
+        let current = new Date(year, month, 1);
+        
+        // Geser ke hari Senin pertama (bisa di akhir bulan sebelumnya)
+        while(current.getDay() !== 1) {
+            current.setDate(current.getDate() - 1);
         }
 
-        if (firstMonday > 1) {
-            weekSel.add(new Option(`Minggu Transisi (Tgl 1 - ${firstMonday - 1})`, `1-${firstMonday-1}`));
-        }
-
-        let currentStart = firstMonday;
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         let weekNum = 1;
 
-        while (currentStart <= daysInMonth) {
-            let currentEnd = Math.min(currentStart + 6, daysInMonth);
-            weekSel.add(new Option(`Minggu ${weekNum++} (Tgl ${currentStart} - ${currentEnd})`, `${currentStart}-${currentEnd}`));
-            currentStart += 7;
+        // Buat pilihan minggu sampai melewati akhir bulan terpilih
+        // Kita butuh 6 minggu untuk mengcover semua kemungkinan
+        for(let i = 0; i < 6; i++) {
+            let weekStart = new Date(current);
+            let weekEnd = new Date(current);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+
+            // Tampilkan minggu jika setidaknya ada satu hari di bulan terpilih
+            if (weekStart.getMonth() === month || weekEnd.getMonth() === month) {
+                let label = `Minggu ${weekNum++} (${weekStart.getDate()} ${monthNames[weekStart.getMonth()]} - ${weekEnd.getDate()} ${monthNames[weekEnd.getMonth()]})`;
+                let val = `${weekStart.getFullYear()}-${weekStart.getMonth()}-${weekStart.getDate()}`;
+                weekSel.add(new Option(label, val));
+            }
+            current.setDate(current.getDate() + 7);
         }
     }
 
@@ -339,55 +348,84 @@
         const month = parseInt(document.getElementById('select-month').value);
         const year = parseInt(document.getElementById('select-year').value);
         const search = document.getElementById('search-nurse').value.toLowerCase();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
         
-        let startDay = 1;
-        let endDay = daysInMonth;
-
+        let daysToRender = [];
+        
         if (viewMode === 'weekly') {
             const weekVal = document.getElementById('select-week').value;
             if(weekVal) {
                 const parts = weekVal.split('-');
-                startDay = parseInt(parts[0]);
-                endDay = parseInt(parts[1]);
+                let startDate = new Date(parseInt(parts[0]), parseInt(parts[1]), parseInt(parts[2]));
+                for(let i = 0; i < 7; i++) {
+                    let d = new Date(startDate);
+                    d.setDate(d.getDate() + i);
+                    daysToRender.push({
+                        day: d.getDate(),
+                        month: d.getMonth(),
+                        year: d.getFullYear(),
+                        isSunday: d.getDay() === 0,
+                        dayName: dayNames[d.getDay()]
+                    });
+                }
+            }
+        } else {
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            for(let d = 1; d <= daysInMonth; d++) {
+                let dateObj = new Date(year, month, d);
+                daysToRender.push({
+                    day: d,
+                    month: month,
+                    year: year,
+                    isSunday: dateObj.getDay() === 0,
+                    dayName: dayNames[dateObj.getDay()]
+                });
             }
         }
 
+        // Update Label Header untuk Export
+        const first = daysToRender[0];
+        const last = daysToRender[daysToRender.length - 1];
+        let periodLabel = `${monthNames[month]} ${year}`;
+        if (viewMode === 'weekly' && first.month !== last.month) {
+            periodLabel = `${monthNames[first.month]} - ${monthNames[last.month]} ${last.year}`;
+        }
+        document.getElementById('export-period-label').innerText = `Puskesmas Sampanahan • ${periodLabel}`;
+
+        // Header Render
         let headHtml = `<tr><th class="sticky-col">Nama Perawat</th>`;
-        for(let d = startDay; d <= endDay; d++) {
-            const dateObj = new Date(year, month, d);
-            const dayName = dayNames[dateObj.getDay()];
-            const isSunday = dateObj.getDay() === 0;
-            const sundayClass = isSunday ? 'cell-sunday' : '';
-            
+        daysToRender.forEach(d => {
+            const sundayClass = d.isSunday ? 'cell-sunday' : '';
             headHtml += `
                 <th class="${sundayClass}">
-                    <div class="mb-1">${dayName}</div>
-                    <div class="text-[11px]">${d}</div>
+                    <div class="mb-1">${d.dayName}</div>
+                    <div class="text-[11px]">${d.day}</div>
                 </th>`;
-        }
+        });
         headHtml += `<th class="summary-header">TOTAL</th></tr>`;
         document.getElementById('table-head').innerHTML = headHtml;
 
+        // Body Render
         let bodyHtml = "";
         const filteredOfficers = db.officers.filter(name => name.toLowerCase().includes(search));
 
         if (filteredOfficers.length === 0) {
-            bodyHtml = `<tr><td colspan="${(endDay - startDay + 1) + 2}" class="py-20 text-slate-400 italic font-bold text-[10px] uppercase">Data tidak ditemukan.</td></tr>`;
+            bodyHtml = `<tr><td colspan="${daysToRender.length + 2}" class="py-20 text-slate-400 italic font-bold text-[10px] uppercase text-center">Data tidak ditemukan.</td></tr>`;
         } else {
             filteredOfficers.forEach(name => {
                 let rowCount = 0;
                 bodyHtml += `<tr><td class="sticky-col uppercase truncate">${name}</td>`;
                 
-                for(let d = startDay; d <= endDay; d++) {
-                    const isSunday = new Date(year, month, d).getDay() === 0;
-                    const shiftValue = (db.schedule[name] && db.schedule[name][d]) ? db.schedule[name][d] : "";
+                daysToRender.forEach(d => {
+                    // Logic simpan: Jika beda bulan, kita tetap simpan di DB schedule perawat tersebut.
+                    // Catatan: DB saat ini menggunakan index tanggal 1-31 tanpa membedakan bulan di dalam objek schedule[nama].
+                    // Untuk konsistensi UI, kita tampilkan data sesuai tanggal tersebut.
+                    const shiftValue = (db.schedule[name] && db.schedule[name][d.day]) ? db.schedule[name][d.day] : "";
                     if(shiftValue) rowCount++;
-                    const sundayClass = isSunday ? 'cell-sunday' : '';
+                    const sundayClass = d.isSunday ? 'cell-sunday' : '';
                     
                     bodyHtml += `
                     <td class="${sundayClass} ${shiftValue ? 'cell-'+shiftValue : ''}">
-                        <select onchange="updateShift('${name}', ${d}, this)" class="shift-input ${sundayClass} ${shiftValue ? 'cell-'+shiftValue : ''}">
+                        <select onchange="updateShift('${name}', ${d.day}, this, ${d.isSunday})" class="shift-input ${sundayClass} ${shiftValue ? 'cell-'+shiftValue : ''}">
                             <option value=""></option>
                             <option value="P" ${shiftValue === 'P' ? 'selected' : ''}>P</option>
                             <option value="S" ${shiftValue === 'S' ? 'selected' : ''}>S</option>
@@ -395,18 +433,17 @@
                             <option value="POLI" ${shiftValue === 'POLI' ? 'selected' : ''}>POLI</option>
                         </select>
                     </td>`;
-                }
+                });
                 bodyHtml += `<td class="summary-header">${rowCount}</td></tr>`;
             });
         }
         document.getElementById('table-body').innerHTML = bodyHtml;
     }
 
-    function updateShift(name, day, el) {
+    function updateShift(name, day, el, isSunday) {
         if (!db.schedule[name]) db.schedule[name] = {};
         db.schedule[name][day] = el.value;
         const td = el.parentElement;
-        const isSunday = new Date(parseInt(document.getElementById('select-year').value), parseInt(document.getElementById('select-month').value), day).getDay() === 0;
         const sundayClass = isSunday ? 'cell-sunday' : '';
         td.className = `${sundayClass} ${el.value ? 'cell-'+el.value : ''}`;
         el.className = `shift-input ${sundayClass} ${el.value ? 'cell-'+el.value : ''}`;
@@ -466,17 +503,8 @@
         const btn = event.currentTarget;
         const originalText = btn.innerHTML;
         
-        const month = monthNames[document.getElementById('select-month').value];
-        const year = document.getElementById('select-year').value;
-
-        // Persiapan visual untuk capture
-        document.getElementById('export-header').classList.remove('hidden');
-        document.getElementById('capture-footer').style.display = 'flex';
-        document.getElementById('export-period-label').innerText = `Puskesmas Sampanahan • ${month} ${year}`;
-        
         btn.innerHTML = "⏳ Memproses..."; btn.disabled = true;
 
-        // Simpan posisi scroll asli
         const originalScrollX = window.scrollX;
         const originalScrollY = window.scrollY;
         window.scrollTo(0, 0);
@@ -487,14 +515,15 @@
         const tableWrapper = document.querySelector('.table-wrapper');
         const table = document.getElementById('main-table');
         
-        // Backup styles
         const originalWrapperStyle = tableWrapper.getAttribute('style') || '';
         const originalAreaStyle = area.getAttribute('style') || '';
         
-        // FORSIR UKURAN PENUH UNTUK CAPTURE (PENTING UNTUK MOBILE)
+        document.getElementById('export-header').classList.remove('hidden');
+        document.getElementById('capture-footer').style.display = 'flex';
+        
         tableWrapper.style.maxHeight = 'none';
         tableWrapper.style.overflow = 'visible';
-        area.style.width = table.scrollWidth + 40 + 'px'; // Lebar tabel + padding
+        area.style.width = table.scrollWidth + 40 + 'px'; 
         area.style.maxWidth = 'none';
         
         summaryHeaders.forEach(el => el.style.display = 'none');
@@ -510,13 +539,11 @@
                 width: area.scrollWidth,
                 height: area.scrollHeight,
                 windowWidth: area.scrollWidth,
-                windowHeight: area.scrollHeight,
-                x: 0,
-                y: 0
+                windowHeight: area.scrollHeight
             });
             
             const link = document.createElement('a');
-            link.download = `Jadwal_Sampanahan_${month}_${year}.png`;
+            link.download = `Jadwal_Puskesmas_Sampanahan_${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
             showToast("Gambar berhasil disimpan!");
@@ -524,30 +551,17 @@
             console.error(e);
             alert("Gagal membuat gambar.");
         } finally {
-            // Kembalikan ke normal
             document.getElementById('export-header').classList.add('hidden');
             document.getElementById('capture-footer').style.display = 'none';
-            
             tableWrapper.setAttribute('style', originalWrapperStyle);
             area.setAttribute('style', originalAreaStyle);
-            
             summaryHeaders.forEach(el => el.style.display = '');
             stickyCols.forEach(el => el.style.position = 'sticky');
             headers.forEach(el => el.style.position = 'sticky');
-            
             window.scrollTo(originalScrollX, originalScrollY);
             btn.innerHTML = originalText; btn.disabled = false;
         }
     }
-
-    document.getElementById('select-month').addEventListener('change', () => {
-        updateWeekOptions();
-        renderTable();
-    });
-    document.getElementById('select-year').addEventListener('change', () => {
-        updateWeekOptions();
-        renderTable();
-    });
 
     window.onload = () => {
         initFilters();
