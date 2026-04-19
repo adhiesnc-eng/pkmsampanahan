@@ -289,7 +289,53 @@
             </div>
         </div>
 
-        <!-- 3. MANAJEMEN PERAWAT -->
+        <!-- 3. PENGATURAN LOKASI (GPS) NEW -->
+        <div class="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden group">
+            <div onclick="togglePanel('panel-gps')" class="p-8 flex justify-between items-center cursor-pointer hover:bg-slate-50/50 transition-colors">
+                <div class="flex items-center gap-5">
+                    <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">📍</div>
+                    <h4 class="font-black text-xs uppercase text-slate-800 tracking-wider">Lock Lokasi & GPS</h4>
+                </div>
+                <span id="icon-panel-gps" class="chevron-icon text-slate-300 font-bold text-xs">▼</span>
+            </div>
+            <div id="panel-gps" class="setting-panel-content">
+                <div class="px-8 pb-8 space-y-6">
+                    <div class="flex items-center justify-between p-5 bg-slate-50 rounded-[24px] border border-slate-100">
+                        <div>
+                            <p class="font-black text-[10px] uppercase text-slate-700">Wajib Aktifkan GPS</p>
+                            <p class="text-[9px] text-slate-400 mt-0.5">Kunci presensi hanya di koordinat tertentu</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="cfg-gps-lock">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div>
+                                <p class="font-black text-[10px] uppercase text-slate-400 mb-2 tracking-widest">Titik Koordinat (Lat, Lng)</p>
+                                <div class="flex gap-2">
+                                    <input type="text" id="cfg-lat" class="w-full p-4 border border-slate-200 rounded-[20px] bg-slate-50 outline-none focus:border-red-500 font-mono text-xs" placeholder="Latitude">
+                                    <input type="text" id="cfg-lng" class="w-full p-4 border border-slate-200 rounded-[20px] bg-slate-50 outline-none focus:border-red-500 font-mono text-xs" placeholder="Longitude">
+                                </div>
+                            </div>
+                            <button onclick="getCurrentLocation()" class="w-full py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-[10px] uppercase hover:bg-slate-200 transition-all">📍 Ambil Lokasi Saya Sekarang</button>
+                        </div>
+                        <div>
+                            <p class="font-black text-[10px] uppercase text-slate-400 mb-2 tracking-widest">Radius Presensi (Meter)</p>
+                            <div class="relative">
+                                <input type="number" id="cfg-radius" class="w-full p-5 border border-slate-200 rounded-[24px] bg-slate-50 outline-none focus:border-red-500 font-bold" placeholder="Contoh: 100">
+                                <span class="absolute right-6 top-1/2 -translate-y-1/2 font-black text-[10px] text-slate-300">METERS</span>
+                            </div>
+                            <p class="text-[8px] text-slate-400 mt-3 italic font-medium uppercase">* Jarak maksimal perawat dari titik pusat untuk diizinkan scan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. MANAJEMEN PERAWAT -->
         <div class="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden">
             <div onclick="togglePanel('panel-nurses')" class="p-8 flex justify-between items-center cursor-pointer hover:bg-slate-50/50">
                 <div class="flex items-center gap-5">
@@ -309,7 +355,7 @@
             </div>
         </div>
 
-        <!-- 4. JADWAL JAGA -->
+        <!-- 5. JADWAL JAGA -->
         <div class="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden">
             <div onclick="togglePanel('panel-sch')" class="p-8 flex justify-between items-center cursor-pointer hover:bg-slate-50/50">
                 <div class="flex items-center gap-5">
@@ -329,7 +375,7 @@
             </div>
         </div>
 
-        <!-- 5. PENGATURAN JAM SHIFT -->
+        <!-- 6. PENGATURAN JAM SHIFT -->
         <div class="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden">
             <div onclick="togglePanel('panel-times')" class="p-8 flex justify-between items-center cursor-pointer hover:bg-slate-50/50">
                 <div class="flex items-center gap-5">
@@ -370,7 +416,7 @@
             </div>
         </div>
 
-        <!-- 6. KEAMANAN & SISTEM -->
+        <!-- 7. KEAMANAN & SISTEM -->
         <div class="bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden">
             <div onclick="togglePanel('panel-sec')" class="p-8 flex justify-between items-center cursor-pointer hover:bg-slate-50/50">
                 <div class="flex items-center gap-5">
@@ -428,6 +474,10 @@
             scanMethod: 'manual', 
             voice: true, 
             popup: true, 
+            gpsLock: false, // NEW
+            lat: "", // NEW
+            lng: "", // NEW
+            radius: 100, // NEW
             adminPin: "1111", 
             chatPin: "ugd", 
             qrData: "SISTEM-PRO-01", 
@@ -465,7 +515,6 @@
         const isOpen = el.classList.contains('open');
         
         if(!isOpen) {
-            // Close all first for accordion effect
             document.querySelectorAll('.setting-panel-content').forEach(p => p.classList.remove('open'));
             document.querySelectorAll('.chevron-icon').forEach(i => i.classList.remove('rotate'));
             el.classList.add('open'); 
@@ -474,6 +523,26 @@
             el.classList.remove('open'); 
             icon.classList.remove('rotate');
         }
+    }
+
+    // --- GPS HELPER ---
+    function getCurrentLocation() {
+        if (!navigator.geolocation) {
+            return showToast("Browser tidak mendukung geolokasi", "error");
+        }
+        showLoading(true);
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                document.getElementById('cfg-lat').value = pos.coords.latitude.toFixed(6);
+                document.getElementById('cfg-lng').value = pos.coords.longitude.toFixed(6);
+                showToast("Berhasil mendapatkan koordinat lokasi!");
+                showLoading(false);
+            },
+            (err) => {
+                showToast("Gagal mengambil lokasi: " + err.message, "error");
+                showLoading(false);
+            }
+        );
     }
 
     // --- LOGIC ---
@@ -518,6 +587,12 @@
         document.getElementById('hex-label').innerText = c.themeColor.toUpperCase();
         document.getElementById('cfg-voice').checked = (c.voice !== false);
         document.getElementById('cfg-popup').checked = (c.popup !== false);
+        
+        // GPS Fields
+        document.getElementById('cfg-gps-lock').checked = (c.gpsLock === true);
+        document.getElementById('cfg-lat').value = c.lat || "";
+        document.getElementById('cfg-lng').value = c.lng || "";
+        document.getElementById('cfg-radius').value = c.radius || 100;
         
         if(c.shiftHours) {
             document.getElementById('time-pagi-start').value = c.shiftHours.Pagi.start;
@@ -590,7 +665,6 @@
         canvas.width = 400;
         canvas.height = 400;
         
-        // Crop center square
         const size = Math.min(video.videoWidth, video.videoHeight);
         const x = (video.videoWidth - size) / 2;
         const y = (video.videoHeight - size) / 2;
@@ -676,13 +750,18 @@
         btn.disabled = true;
         showLoading(true);
 
-        // Update local state from inputs
         db.config.adminPin = document.getElementById('cfg-admin-pin').value;
         db.config.chatPin = document.getElementById('cfg-chat-pin').value;
         db.config.qrData = document.getElementById('cfg-qr-data').value;
         db.config.themeColor = document.getElementById('cfg-theme-color').value;
         db.config.voice = document.getElementById('cfg-voice').checked;
         db.config.popup = document.getElementById('cfg-popup').checked;
+        
+        // Save GPS Config
+        db.config.gpsLock = document.getElementById('cfg-gps-lock').checked;
+        db.config.lat = document.getElementById('cfg-lat').value;
+        db.config.lng = document.getElementById('cfg-lng').value;
+        db.config.radius = parseInt(document.getElementById('cfg-radius').value) || 100;
 
         db.config.shiftHours = {
             Pagi: { start: document.getElementById('time-pagi-start').value, end: document.getElementById('time-pagi-end').value },
@@ -718,9 +797,7 @@
         }
     }
 
-    // Auto-login if debug or needed
     window.onload = () => {
-        // focus pin input
         document.getElementById('settings-pin-input').focus();
     };
 </script>
